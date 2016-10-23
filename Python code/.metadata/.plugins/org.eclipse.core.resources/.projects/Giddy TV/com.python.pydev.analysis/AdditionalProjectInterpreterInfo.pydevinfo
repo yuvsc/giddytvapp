@@ -1,37 +1,66 @@
 -- VERSION_4
 -- START DISKCACHE_2
 C:\Users\Dylan Alpiger\Documents\GitHub\giddytvapp\Python code\.metadata\.plugins\org.eclipse.core.resources\.projects\Giddy TV\com.python.pydev.analysis\v2_indexcache
+script|1477259410273749000|C:\Users\Dylan Alpiger\Documents\GitHub\giddytvapp\Python code\Giddy TV\Script.py
 -- END DISKCACHE
 -- START DICTIONARY
-0
+24
+11=Envoy.setEmail
+17=Project.setName
+2=User
+20=Envoy.setSignInTime
+16=User.setName
+18=Update.setName
+8=Update.__init__
+12=User.__init__
+10=Envoy.__init__
+21=Envoy.setSignOutTime
+4=Update
+1=script
+7=Project.setDetail
+3=Project
+19=Envoy.setName
+13=User.setImage
+23=User.setUsername
+5=Envoy
+14=Project.setImage
+24=Envoy.setUsername
+6=Project.__init__
+9=Update.setDetail
+22=Project.setTitle
+15=Update.setImages
 -- END DICTIONARY
 -- START TREE 1
-12
-all|0|
-api|0|
-dat|0|
-def|0|
-new|0|
-pro|0|
-r|0|
-s|0|
-str|0|
-upd|0|
-use|0|
-usr|0|
+14
+all|2|allProjects!11@allUsers!11@
+d|1|d!11@
+dah|1|dahtah!11@
+dat|1|data!11@
+env|2|EnvoyAPI!11@Envoy!9@
+fin|1|findProj!10@
+get|1|GET!10@
+gid|1|GiddyAPI!11@
+pro|2|proj!11@Project!9@
+s|1|s!11@
+thi|1|thisProj!11@
+u|1|u!11@
+upd|2|update!11@Update!9@
+use|1|User!9@
 -- END TREE
 -- START TREE 2
-12
-__i|0|
-add|0|
-det|0|
-get|0|
-ima|0|
-nam|0|
-pro|0|
-set|0|
-tea|0|
-tit|0|
-upd|0|
-use|0|
+14
+__i|4|__init__!2&10@__init__!3&10@__init__!4&10@__init__!5&10@
+add|3|addProject!2&10@addUser!3&10@addUpdate!3&10@
+det|4|detail!6&11@detail!7&11@detail!8&11@detail!9&11@
+ema|2|email!10&11@email!11&11@
+get|18|getUpdate!3&10@getName!2&10@getName!3&10@getName!4&10@getName!5&10@getSignInTime!5&10@getEmail!5&10@getUsername!2&10@getImage!2&10@getTitle!3&10@getImage!3&10@getImage!4&10@getUsername!5&10@getProject!2&10@getSignOutTime!5&10@getDetail!3&10@getDetail!4&10@getMember!3&10@
+ima|6|image!12&11@image!13&11@image!6&11@image!14&11@images!8&11@images!15&11@
+nam|8|name!12&11@name!16&11@name!6&11@name!17&11@name!8&11@name!18&11@name!10&11@name!19&11@
+pro|1|projects!12&11@
+set|16|setEmail!5&10@setUsername!2&10@setUsername!5&10@setSignInTime!5&10@setDetail!3&10@setDetail!4&10@setImages!4&10@setName!2&10@setName!3&10@setTitle!3&10@setName!4&10@setName!5&10@setImage!2&10@setImage!3&10@setImage!4&10@setSignOutTime!5&10@
+sig|4|signInTime!10&11@signInTime!20&11@signOutTime!10&11@signOutTime!21&11@
+tea|1|team!6&11@
+tit|2|title!6&11@title!22&11@
+upd|1|updates!6&11@
+use|4|username!12&11@username!23&11@username!10&11@username!24&11@
 -- END TREE

@@ -1,0 +1,50 @@
+-- VERSION_4
+-- START DISKCACHE_2
+C:\Users\Dylan Alpiger\Documents\School\giddytvapp\.metadata\.plugins\org.eclipse.core.resources\.projects\Giddy TV\com.python.pydev.analysis\v2_indexcache
+script|1476992695465276000|C:\Users\Dylan Alpiger\Documents\School\giddytvapp\Python code\Giddy TV\script.py
+-- END DISKCACHE
+-- START DICTIONARY
+16
+13=Project.setName
+2=User
+12=User.setName
+14=Update.setName
+7=Update.__init__
+9=User.__init__
+4=Update
+1=script
+6=Project.setDetail
+3=Project
+10=User.setImage
+16=User.setUsername
+11=Project.setImage
+5=Project.__init__
+8=Update.setDetail
+15=Project.setTitle
+-- END DICTIONARY
+-- START TREE 1
+8
+all|2|allProjects!11@allUsers!11@
+api|1|API!11@
+dat|1|data!11@
+pro|1|Project!9@
+r|1|r!11@
+s|1|s!11@
+upd|1|Update!9@
+use|1|User!9@
+-- END TREE
+-- START TREE 2
+12
+__i|3|__init__!2&10@__init__!3&10@__init__!4&10@
+add|4|addProject!2&10@addImage!4&10@addUser!3&10@addUpdate!3&10@
+det|4|detail!5&11@detail!6&11@detail!7&11@detail!8&11@
+get|13|getUpdate!3&10@getName!2&10@getName!3&10@getName!4&10@getUsername!2&10@getImage!2&10@getTitle!3&10@getImage!3&10@getImage!4&10@getProject!2&10@getDetail!3&10@getDetail!4&10@getMember!3&10@
+ima|5|image!9&11@image!10&11@image!5&11@image!11&11@images!7&11@
+nam|6|name!9&11@name!12&11@name!5&11@name!13&11@name!7&11@name!14&11@
+pro|1|projects!9&11@
+set|9|setDetail!3&10@setDetail!4&10@setName!2&10@setName!3&10@setTitle!3&10@setName!4&10@setImage!2&10@setImage!3&10@setUsername!2&10@
+tea|1|team!5&11@
+tit|2|title!5&11@title!15&11@
+upd|1|updates!5&11@
+use|2|username!9&11@username!16&11@
+-- END TREE

@@ -4,6 +4,17 @@ Created on Oct 19, 2016
 '''
 import json
 import requests
+from datetime import datetime
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def index(Users, Projects):
+	return render_template("index.html", Users = Users, Projects = Projects)
+	
+if __name__ == "__main__":
+	app.run()
 
 class User:
     def __init__(self):
@@ -109,42 +120,50 @@ class Update:
         self.images[i] = string
 
 class Envoy:
-    def __init__(self):
-        self.name = ''
-        self.username = ''
-        self.email = ''
-        self.signInTime = ''
-        self.signOutTime = ''
+	def __init__(self):
+		self.name = ''
+		self.username = ''
+		self.email = ''
+		self.signInTime = ''
+		self.signOutTime = ''
+		
+	def getName(self):
+		return self.name
+
+	def getUsername(self):
+		return self.username
+
+	def getEmail(self):
+		return self.email
+
+	def getSignInTime(self):
+		return self.signInTime
+
+	def getSignOutTime(self):
+		return self.signOutTime
+		
+	def setName(self, n):
+		self.name = n
         
-    def getName(self):
-        return self.name
-    
-    def getUsername(self):
-        return self.username
-    
-    def getEmail(self):
-        return self.email
-    
-    def getSignInTime(self):
-        return self.signInTime
-    
-    def getSignOutTime(self):
-        return self.signOutTime
-    
-    def setName(self, n):
-        self.name = n
+	def setUsername(self, u):
+		self.username = u
+		
+	def setEmail(self, e):
+		self.email = e
         
-    def setUsername(self, u):
-        self.username = u
-        
-    def setEmail(self, e):
-        self.email = e
-        
-    def setSignInTime(self, i):
-        self.signInTime = i
-        
-    def setSignOutTime(self, o):
-        self.signOutTime = o
+	def setSignInTime(self, i):
+		self.signInTime = i
+	
+	def setSignOutTime(self, o):
+		self.signOutTime = o
+		
+	#returns TRUE if the person is currently in building. FALSE otherwise
+	def isIn(self):
+		currentDate = str(datetime.now())
+		if (self.signInTime[:10] == currentDate[:10] and self.signOutTime == ""):
+			return True
+		else:
+			return False
 
 #Perform GET request      
 def GET(a):
@@ -157,6 +176,7 @@ def findProj(projList, name):
     for i in range(len(projList)):
         if projList[i].getName() == name:
             return projList[i]
+			
       
 #---MAIN---#
 allUsers = []
@@ -236,37 +256,65 @@ for i in range(len(allUsers)):
             proj.addUser(allUsers[i])
             allProjects.append(proj)
 
+print("################################### going to index #####################")
+index(allUsers, allProjects)
+print ("Done!")
 #print information for the first user
-print ("Username:", allUsers[0].getUsername())
-print ("Name:", allUsers[0].getName())
-print ("Avatar:", allUsers[0].getImage())
-print ("---User's Projects---")
-for i in range(len(allUsers[0].projects)):
-    print ("\tName:", allUsers[0].getProject(i).getName())
-    print ("\tTitle:", allUsers[0].getProject(i).getTitle())
-    try:
-        print ("\tDescription:", allUsers[0].getProject(i).getDetail())
-    except:
-        print ("\t\tDescription: Description has emojis!")
-    print ("\t---Team---")
-    for j in range(len(allUsers[0].getProject(i).team)):
-        print ("\tUsername:", allUsers[0].getProject(i).getMember(j))
-    print ("\t---Updates---")
-    for k in range(len(allUsers[0].getProject(i).updates)):
-        try:
-            print ("\t\tName:", allUsers[0].getProject(i).getUpdate(k).getName())
-        except:
-            print ("\t\tName: Name has emojis!")
-        try:
-            print ("\t\tDescription:", allUsers[0].getProject(i).getUpdate(k).getDetail())
-        except:
-            print ("\t\tDescription: Description has emojis!")
-        print ("\t\tImages:", allUsers[0].getProject(i).getUpdate(k).images, "\n")
+#print ("Username:", allUsers[0].getUsername())
+#print ("Name:", allUsers[0].getName())
+#print ("Avatar:", allUsers[0].getImage())
+#print ("---User's Projects---")
+#for i in range(len(allUsers[0].projects)):
+#    print ("\tName:", allUsers[0].getProject(i).getName())
+#    print ("\tTitle:", allUsers[0].getProject(i).getTitle())
+#    try:
+#        print ("\tDescription:", allUsers[0].getProject(i).getDetail())
+#    except:
+#        print ("\t\tDescription: Description has emojis!")
+#    print ("\t---Team---")
+#    for j in range(len(allUsers[0].getProject(i).team)):
+#        print ("\tUsername:", allUsers[0].getProject(i).getMember(j).getUsername())
+#    print ("\t---Updates---")
+#    for k in range(len(allUsers[0].getProject(i).updates)):
+#        try:
+#            print ("\t\tName:", allUsers[0].getProject(i).getUpdate(k).getName())
+#        except:
+#            print ("\t\tName: Name has emojis!")
+#        try:
+#            print ("\t\tDescription:", allUsers[0].getProject(i).getUpdate(k).getDetail())
+#        except:
+#            print ("\t\tDescription: Description has emojis!")
+#        print ("\t\tImages:", allUsers[0].getProject(i).getUpdate(k).images, "\n")
 
 #print every project and the full team of that project    
 #for i in range(len(allProjects)):
 #    for j in range(len(allProjects[i].team)):
 #        print (allProjects[i].getTitle(), ":", allProjects[i].getMember(j).getUsername())
+        
+#print all users and the projects associated with each user (note if the user has no projects, they will not appear)
+#for i in range(len(allUsers)):
+#    for j in range(len(allUsers[i].projects)):
+#        print (allUsers[i].getUsername(), ":", allUsers[i].getProject(j).getTitle())
+
+#Check all projects' image URLs
+#for i in range(len(allProjects)):
+#    print (allProjects[i].getTitle(), ":", allProjects[i].getImage())
+        
+#Print all updates for all projects
+#for i in range(len(allProjects)):
+#    for j in range(len(allProjects[i].updates)):
+#        try:
+#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName())
+#        except:
+#            print ("Update has emoji in title!")    #warning: descriptions have also shown to have emojis
+
+#Print all updates and update images for all projects
+#for i in range(len(allProjects)):
+#    for j in range(len(allProjects[i].updates)):
+#        try:
+#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName(), ":", allProjects[i].getUpdate(j).images)
+#        except:
+#            print ("Update has emoji in title! :", allProjects[i].getUpdate(j).images)    #warning: descriptions have also shown to have emojis
         
 #print all users and the projects associated with each user (note if the user has no projects, they will not appear)
 #for i in range(len(allUsers)):

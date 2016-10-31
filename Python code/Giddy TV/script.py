@@ -12,112 +12,129 @@ app = Flask(__name__)
 @app.route('/')
 def index(Users, Projects):
 	return render_template("index.html", Users = Users, Projects = Projects)
-	
+
 if __name__ == "__main__":
 	app.run()
-
+	
 class User:
-    def __init__(self):
-        self.name = ''
-        self.username = ''
-        self.image = ''
-        self.projects = []
-      
-    def addProject(self, p):
-        self.projects.append(p)
-        
-    def getName(self):
-        return self.name
-      
-    def getUsername(self):
-        return self.username
+	def __init__(self):
+		self.name = ''
+		self.username = ''
+		self.image = ''
+		self.projects = []
+		return "hi"
+		
+	def addProject(self, p):
+		self.projects.append(p)
+		return "hi"
+		
+	def getName(self):
+		return self.name
+	  
+	def getUsername(self):
+		return self.username
 
-    def getImage(self):
-        return self.image
-        
-    def getProject(self, i):
-        return self.projects[i]
-    
-    def setName(self, name):
-        self.name = name
-    
-    def setUsername(self, username):
-        self.username = username
-        
-    def setImage(self, image):
-        self.image = image
+	def getImage(self):
+		return self.image
+		
+	def getProject(self, i):
+		return self.projects[i]
+
+	def setName(self, name):
+		self.name = name
+		return "hi"
+
+	def setUsername(self, username):
+		self.username = username
+		return "hi"
+		
+	def setImage(self, image):
+		self.image = image
+		return "hi"
 
 class Project:
     def __init__(self):
-        self.name = ''
-        self.title = ''
-        self.detail = ''
-        self.image = ''
-        self.team = []
-        self.updates = []
-    
-    def addUser(self, u):
-        self.team.append(u)
-        
-    def addUpdate(self, u):
-        self.updates.append(u)
-        
-    def getName(self):
-        return self.name
-        
-    def getTitle(self):
-        return self.title
-    
-    def getDetail(self):
-        return self.detail
-        
-    def getImage(self):
-        return self.image
-        
-    def getMember(self, i):
-        return self.team[i]
-        
-    def getUpdate(self, i):
-        return self.updates[i]
-    
-    def setName(self, name):
-        self.name = name
-    
-    def setTitle(self, title):
-        self.title = title
-        
-    def setDetail(self, detail):
-        self.detail = detail
-        
-    def setImage(self, image):
-        self.image = image
+		self.name = ''
+		self.title = ''
+		self.detail = ''
+		self.image = ''
+		self.team = []
+		self.updates = []
+		return "hi"
+	
+	def addUser(self, u):
+		self.team.append(u)
+		return "hi"
+		
+	def addUpdate(self, u):
+		self.updates.append(u)
+		return "hi"
+		
+	def getName(self):
+		return self.name
+		
+	def getTitle(self):
+		return self.title
+
+	def getDetail(self):
+		return self.detail
+		
+	def getImage(self):
+		return self.image
+		
+	def getMember(self, i):
+		return self.team[i]
+		
+	def getUpdate(self, i):
+		return self.updates[i]
+
+	def setName(self, name):
+		self.name = name
+		return "hi"
+
+	def setTitle(self, title):
+		self.title = title
+		return "hi"
+		
+	def setDetail(self, detail):
+		self.detail = detail
+		return "hi"
+		
+	def setImage(self, image):
+		self.image = image
+		return "hi"
       
 class Update:
-    def __init__(self):
-        self.name = ''
-        self.detail = ''
-        self.images = []
-    
-    def getName(self):
-        return self.name
-        
-    def getDetail(self):
-        return self.detail
-        
-    def getImage(self, i):
-        return self.images[i]
-    
-    def setName(self, name):
-        self.name = name
-        
-    def setDetail(self, detail):
-        self.detail = detail
-        
-    def setImages(self, imageList):
-        self.images = imageList
-        
-    def setImage(self, i, string):
-        self.images[i] = string
+	def __init__(self):
+		self.name = ''
+		self.detail = ''
+		self.images = []
+		return "hi"
+
+	def getName(self):
+		return self.name
+		
+	def getDetail(self):
+		return self.detail
+		
+	def getImage(self, i):
+		return self.images[i]
+
+	def setName(self, name):
+		self.name = name
+		return "hi"
+		
+	def setDetail(self, detail):
+		self.detail = detail
+		return "hi"
+		
+	def setImages(self, imageList):
+		self.images = imageList
+		return "hi"
+		
+	def setImage(self, i, string):
+		self.images[i] = string
+		return "hi"
 
 class Envoy:
 	def __init__(self):
@@ -126,6 +143,7 @@ class Envoy:
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
+		return "hi"
 		
 	def getName(self):
 		return self.name
@@ -144,18 +162,23 @@ class Envoy:
 		
 	def setName(self, n):
 		self.name = n
-        
+		return "hi"
+		
 	def setUsername(self, u):
 		self.username = u
+		return "hi"
 		
 	def setEmail(self, e):
 		self.email = e
-        
+		return "hi"
+		
 	def setSignInTime(self, i):
 		self.signInTime = i
-	
+		return "hi"
+
 	def setSignOutTime(self, o):
 		self.signOutTime = o
+		return "hi"
 		
 	#returns TRUE if the person is currently in building. FALSE otherwise
 	def isIn(self):

@@ -7,14 +7,16 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template
 
+global allUsers
+global allProjects
+allUsers = []
+allProjects = []
+
 app = Flask(__name__)
 
 @app.route('/')
-def index(Users, Projects):
-	return render_template("index.html", Users = Users, Projects = Projects)
-	
-if __name__ == "__main__":
-	app.run()
+def index():
+	return render_template("index.html", Users = allUsers, Projects = allProjects)
 
 class User:
     def __init__(self):
@@ -179,8 +181,8 @@ def findProj(projList, name):
 			
       
 #---MAIN---#
-allUsers = []
-allProjects = []
+
+
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
 EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
 
@@ -200,7 +202,6 @@ for i in range(len(data['users'])):
 #Fill users with their projects
 for i in range(len(allUsers)):
     s = GiddyAPI + '/' + allUsers[i].getUsername() + '/prototypes'
-    #print (s)
     data = GET(s)
     for j in range(len(data['prototypes'])):
         proj = Project()
@@ -256,9 +257,14 @@ for i in range(len(allUsers)):
             proj.addUser(allUsers[i])
             allProjects.append(proj)
 
-print("################################### going to index #####################")
-index(allUsers, allProjects)
+print("################################### going to index #######################################")
 print ("Done!")
+
+#Deploy webpapp
+if __name__ == "__main__":
+	app.run()
+
+
 #print information for the first user
 #print ("Username:", allUsers[0].getUsername())
 #print ("Name:", allUsers[0].getName())

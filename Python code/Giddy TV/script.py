@@ -19,35 +19,59 @@ def index():
 	return render_template("index.html", Users = allUsers, Projects = allProjects)
 
 class User:
-    def __init__(self):
-        self.name = ''
-        self.username = ''
-        self.image = ''
-        self.projects = []
+	def __init__(self):
+		self.name = ''
+		self.username = ''
+		self.image = ''
+		self.projects = []
+		self.skills = []
       
-    def addProject(self, p):
-        self.projects.append(p)
-        
-    def getName(self):
-        return self.name
+	def getName(self):
+		return self.name
       
-    def getUsername(self):
-        return self.username
+	def getUsername(self):
+		return self.username
 
-    def getImage(self):
-        return self.image
-        
-    def getProject(self, i):
-        return self.projects[i]
-    
-    def setName(self, name):
-        self.name = name
-    
-    def setUsername(self, username):
-        self.username = username
-        
-    def setImage(self, image):
-        self.image = image
+	def getImage(self):
+		return self.image
+		
+	def getProject(self, i):
+		return self.projects[i]
+		
+	def getSkill(self, i):
+		return self.skills[i]
+
+	def setName(self, name):
+		self.name = name
+
+	def setUsername(self, username):
+		self.username = username
+		
+	def setImage(self, image):
+		self.image = image
+		
+	def addProject(self, p):
+		self.projects.append(p)
+		
+	def addSkill(self, skill):
+		self.skills.append(skill)
+		
+class Skill:
+	def __init__(self):
+		self.title = ''
+		self.level = 0
+		
+	def setTitle (self, title):
+		self.title = title
+		
+	def setLevel (self, level):
+		self.level = level
+		
+	def getTitle (self):
+		return self.title
+		
+	def getLevel (self):
+		return self.level
 
 class Project:
     def __init__(self):
@@ -189,15 +213,26 @@ EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729
 #Fill list of users
 data = GET(GiddyAPI)
 for i in range(len(data['users'])):
-    allUsers.append(User())
-    if 'name' in data['users'][i].keys():
-        allUsers[i].setName(data['users'][i]['name'])
-    if 'username' in data['users'][i].keys():            
-        allUsers[i].setUsername(data['users'][i]['username'])
-    if 'avatar' in data['users'][i].keys():
-        allUsers[i].setImage(data['users'][i]['avatar'])
-        if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
-            allUsers[i].setImage(allUsers[i].getImage() + '/raw')
+	allUsers.append(User())
+	if 'name' in data['users'][i].keys():
+		allUsers[i].setName(data['users'][i]['name'])
+	if 'username' in data['users'][i].keys():            
+		allUsers[i].setUsername(data['users'][i]['username'])
+	if 'avatar' in data['users'][i].keys():
+		allUsers[i].setImage(data['users'][i]['avatar'])
+		if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
+			allUsers[i].setImage(allUsers[i].getImage() + '/raw')
+			
+	if 'tags' in data['users'][i].keys():
+		for j in range(len(data['users'][i]['tags'])):
+			skill = Skill()
+			if 'title' in data['users'][i]['tags'][j].keys():
+				skill.setTitle(data['users'][i]['tags'][j]['title'])
+			if 'level' in data['users'][i]['tags'][j].keys():
+				skill.setLevel(data['users'][i]['tags'][j]['level'])
+				
+			allUsers[i].addSkill(skill)
+				
     
 #Fill users with their projects
 for i in range(len(allUsers)):

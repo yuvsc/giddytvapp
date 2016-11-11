@@ -3,6 +3,8 @@ Created on Oct 19, 2016
 @author: Dylan Alpiger
 '''
 import json
+import Queue
+import threading
 import requests
 from datetime import datetime
 from flask import Flask, render_template
@@ -147,11 +149,15 @@ class Update:
 
 class Envoy:
 	def __init__(self):
+		self.id = ''
 		self.name = ''
 		self.username = ''
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
+		
+	def getId(self):
+		return self.id
 		
 	def getName(self):
 		return self.name
@@ -167,6 +173,9 @@ class Envoy:
 
 	def getSignOutTime(self):
 		return self.signOutTime
+		
+	def setId(self, x):
+		self.id = x;
 		
 	def setName(self, n):
 		self.name = n
@@ -197,6 +206,8 @@ def GET(a):
     r.json()
     return json.loads(r.text)
 
+	
+#11/11/2016 - What does this return if a project is not found?	
 #Find specific project within allProjects by it's name
 def findProj(projList, name):
     for i in range(len(projList)):
@@ -298,6 +309,69 @@ print ("Done!")
 #Deploy webpapp
 if __name__ == "__main__":
 	app.run()
+
+#ENVOY BRIDGE THING
+#11/11/2016		
+#For storing list of logged in guests
+global activeEnvoyGuests
+activeEnvoyGuests = []
+#For storing latest envoy login
+global envoyLastLogin
+envoyLastLogin = Envoy()
+
+data = GET(EnvoyAPI)
+#Initial setting of last/latest login. data['entries'][0] will always be most recent login.
+if 'id' in data['entries'][0].keys()
+	envoyLastLogin.setId(data['entries'][0]['id'])
+if 'your_full_name' in data['entries'][0].keys()
+	envoyLastLogin.setName(data['entries'][0]['your_full_name'])
+if 'giddy_user_id' in data['entries'][0].keys()
+	envoyLastLogin.setUsername(data['entries'][0]['giddy_user_id'])
+if 'your_email_address' in data['entries'][0].keys()
+	envoyLastLogin.setEmail(data['entries'][0]['your_email_address'])
+if 'signed_in_time_local' in data['entries'][0].keys()
+	envoyLastLogin.setSigninTime(data['entries'][0]['signed_in_time_local'])
+if 'signed_out_time_local' in data['entries'][0].keys()
+	envoyLastLogin.setSignOutTime(data['entries'][0]['signed_out_time_local'])
+
+#do a quick welcome display here
+	
+#START OF THREAD STUFF(THREADING STILL TODO)
+#The logic below will eventually be called every ~5s in its own thread	
+#New API call each poll
+data = GET(EnvoyAPI)
+#New list each poll
+envoyLogins = []
+for i in range(len(data['entries'])):
+	envoyLogins.append(Envoy())
+	if 'your_full_name' in data['entries'][i].keys()
+		envoyLogins[i].setName(data['entries'][i]['your_full_name'])
+	if 'giddy_user_id' in data['entries'][i].keys()
+		envoyLogins[i].setUsername(data['entries'][i]['giddy_user_id'])
+	if 'your_email_address' in data['entries'][i].keys()
+		envoyLogins[i].setEmail(data['entries'][i]['your_email_address'])
+	if 'signed_in_time_local' in data['entries'][i].keys()
+		envoyLogins[i].setSigninTime(data['entries'][i]['signed_in_time_local'])
+	if 'signed_out_time_local' in data['entries'][i].keys()
+		envoyLogins[i].setSignOutTime(data['entries'][i]['signed_out_time_local'])
+	if 'id' in data['entries'][i].keys()
+		envoyLogins[i].setId(data['entries'][i]['id'])
+	if (envoyLogins[i].getId() > envoyLastLogin.getId())
+		#if current entry's id is > eLL's id, it is a newer login. Set latest login to current entry.
+		envoyLastLogin = envoyLogins[i]
+		#display a welcome here
+	#Now update the logged in/active users list
+	if (envoyLogins[i].isIn())
+		if ((len(activeEnvoyGuests) == 0) || (envoyLogins[i] not in activeEnvoyGuests))
+			activeEnvoyGuests.append(envoyLogins[i])
+	else 
+		#do a check to remove entry from logged in guests (if he's in list)
+		if ((len(activeEnvoyGuests) > 0) && (envoyLogins[i] in activeEnvoyGuests))
+			for j in range(len(activeEnvoyGuests)):
+				if envoyLogins[i].getId() == activeEnvoyGuests[j].getId()
+					del activeEnvoyGuests[j]
+#END OF ENVOY BRIDGE
+
 
 
 #print information for the first user

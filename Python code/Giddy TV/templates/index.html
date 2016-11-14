@@ -10,10 +10,36 @@
   <link rel="stylesheet" href="static/main.css">
 </head>
 <body>
+<script>
+function update_values(){
+	/*$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	$.getJSON($SCRIPT_ROOT+"/_stuff",
+		function(data) {
+			//$("#Users").text(data.Users+" %")
+			//$("#Projects").text(data.Projects+" %")
+		});*/
+	var deferredData = new jQuery.Deferred();
+
+    $.ajax({
+        type: "GET",
+        url: "/ajax",
+        dataType: "json",
+        success: function(data) { 
+            deferredData.resolve(data);
+            },
+        complete: function(xhr, textStatus) {
+            console.log("AJAX Request complete -> ", xhr, " -> ", textStatus);
+            }
+    });
+	console.log("updated values!");
+	console.log(deferredData);
+	setTimeout(update_values,9500);
+}
+</script>
 
 <div class="container">
 <div class="row">
-  
+  <!--<script>setTimeout(update_values,1000);</script>-->
   <!-- Horizontal Carousel -->
   <div class="col-sm-8">
 	<div class="row">

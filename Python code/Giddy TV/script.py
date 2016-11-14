@@ -18,7 +18,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+	main();#call main
 	return render_template("index.html", Users = allUsers, Projects = allProjects)
+	
+@app.route('/ajax')
+def ajax() :
+    main()
+    return Response(json.dumps(Users), mimetype='application/json')
 
 #user class: getName(), getUserName(), getImage(), getProject(), getSkill()
 class User:
@@ -225,92 +231,92 @@ def findProj(projList, name):
 #APIs:
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
 EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
-
-#Fill list of users
-data = GET(GiddyAPI)
-for i in range(len(data['users'])):
-	allUsers.append(User())
-	if 'name' in data['users'][i].keys():
-		allUsers[i].setName(data['users'][i]['name'])
-	if 'username' in data['users'][i].keys():            
-		allUsers[i].setUsername(data['users'][i]['username'])
-	if 'avatar' in data['users'][i].keys():
-		allUsers[i].setImage(data['users'][i]['avatar'])
-		if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
-			allUsers[i].setImage(allUsers[i].getImage() + '/raw')
-			
-	if 'tags' in data['users'][i].keys():
-		for j in range(len(data['users'][i]['tags'])):
-			skill = Skill()
-			if 'title' in data['users'][i]['tags'][j].keys():
-				skill.setTitle(data['users'][i]['tags'][j]['title'])
-			if 'level' in data['users'][i]['tags'][j].keys():
-				skill.setLevel(data['users'][i]['tags'][j]['level'])
+def main():
+	#Fill list of users
+	data = GET(GiddyAPI)
+	for i in range(len(data['users'])):
+		allUsers.append(User())
+		if 'name' in data['users'][i].keys():
+			allUsers[i].setName(data['users'][i]['name'])
+		if 'username' in data['users'][i].keys():            
+			allUsers[i].setUsername(data['users'][i]['username'])
+		if 'avatar' in data['users'][i].keys():
+			allUsers[i].setImage(data['users'][i]['avatar'])
+			if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
+				allUsers[i].setImage(allUsers[i].getImage() + '/raw')
 				
-			allUsers[i].addSkill(skill)
-				
-    
-#Fill users with their projects
-for i in range(len(allUsers)):
-    s = GiddyAPI + '/' + allUsers[i].getUsername() + '/prototypes'
-    data = GET(s)
-    for j in range(len(data['prototypes'])):
-        proj = Project()
-        if 'name' in data['prototypes'][j].keys():
-            proj.setName(data['prototypes'][j]['name'])
-        if 'title' in data['prototypes'][j].keys():
-            proj.setTitle(data['prototypes'][j]['title'])
-        if 'description' in data['prototypes'][j].keys():
-            proj.setDetail(data['prototypes'][j]['description'])
-        if 'image' in data['prototypes'][j].keys():
-            proj.setImage(data['prototypes'][j]['image'])
-            if (proj.getImage() is not None and proj.getImage() != ''):
-                if proj.getImage()[-4:] != '/raw':
-                    proj.setImage(proj.getImage() + '/raw')
-                
-                #if the project image is an mp4, blank the image URL
-                dahtah = GET(proj.getImage()[:-4])
-                if dahtah['extension'] == 'mp4':
-                    proj.setImage(None)
-        
-        #if the project has already been accounted for, simply add the user to the project's team and the project to the user's list of projects
-		#change to sets if wanted?
-		thisProj = findProj(allProjects, proj.getName())
-        if thisProj is not None:
-            allUsers[i].addProject(thisProj)
-            thisProj.addUser(allUsers[i])
+		if 'tags' in data['users'][i].keys():
+			for j in range(len(data['users'][i]['tags'])):
+				skill = Skill()
+				if 'title' in data['users'][i]['tags'][j].keys():
+					skill.setTitle(data['users'][i]['tags'][j]['title'])
+				if 'level' in data['users'][i]['tags'][j].keys():
+					skill.setLevel(data['users'][i]['tags'][j]['level'])
+					
+				allUsers[i].addSkill(skill)
+					
+		
+	#Fill users with their projects
+	for i in range(len(allUsers)):
+		s = GiddyAPI + '/' + allUsers[i].getUsername() + '/prototypes'
+		data = GET(s)
+		for j in range(len(data['prototypes'])):
+			proj = Project()
+			if 'name' in data['prototypes'][j].keys():
+				proj.setName(data['prototypes'][j]['name'])
+			if 'title' in data['prototypes'][j].keys():
+				proj.setTitle(data['prototypes'][j]['title'])
+			if 'description' in data['prototypes'][j].keys():
+				proj.setDetail(data['prototypes'][j]['description'])
+			if 'image' in data['prototypes'][j].keys():
+				proj.setImage(data['prototypes'][j]['image'])
+				if (proj.getImage() is not None and proj.getImage() != ''):
+					if proj.getImage()[-4:] != '/raw':
+						proj.setImage(proj.getImage() + '/raw')
+					
+					#if the project image is an mp4, blank the image URL
+					dahtah = GET(proj.getImage()[:-4])
+					if dahtah['extension'] == 'mp4':
+						proj.setImage(None)
 			
-        #otherwise add the new project to the user's list, add the user to the new project's team, collect all updates for the new project, and add the new project to the list of allProjects
-        else:
-            #collect all updates for this new project
-            u = s + '/' + proj.getName() + '/updates'
-            d = GET(u)
-            for k in range(len(d['updates'])):
-                update = Update()
-                if 'description' in d['updates'][k].keys():
-                    update.setDetail(d['updates'][k]['description'])
-                if 'title' in d['updates'][k].keys():
-                    update.setName(d['updates'][k]['title'])
-                if 'uploads' in d['updates'][k].keys():
-                    update.setImages(d['updates'][k]['uploads'])
-                    for l in range(len(update.images)):
-                        if (update.getImage(l) is not None and update.getImage(l) != ''):
-                            update.setImage(l, GiddyAPI + '/' + allUsers[i].getUsername() + '/uploads/' + update.getImage(l) + '/raw')
-                        
-                            #if the update image is an mp4, blank the image URL
-                            dahtah = GET(update.getImage(l)[:-4])
-                            if 'extension' in dahtah.keys():
-                                if dahtah['extension'] == 'mp4':
-                                    update.setImage(l,None)
-                    
-                proj.addUpdate(update)
-            
-            allUsers[i].addProject(proj)
-            proj.addUser(allUsers[i])
-            allProjects.append(proj)
+			#if the project has already been accounted for, simply add the user to the project's team and the project to the user's list of projects
+			#change to sets if wanted?
+			thisProj = findProj(allProjects, proj.getName())
+			if thisProj is not None:
+				allUsers[i].addProject(thisProj)
+				thisProj.addUser(allUsers[i])
+				
+			#otherwise add the new project to the user's list, add the user to the new project's team, collect all updates for the new project, and add the new project to the list of allProjects
+			else:
+				#collect all updates for this new project
+				u = s + '/' + proj.getName() + '/updates'
+				d = GET(u)
+				for k in range(len(d['updates'])):
+					update = Update()
+					if 'description' in d['updates'][k].keys():
+						update.setDetail(d['updates'][k]['description'])
+					if 'title' in d['updates'][k].keys():
+						update.setName(d['updates'][k]['title'])
+					if 'uploads' in d['updates'][k].keys():
+						update.setImages(d['updates'][k]['uploads'])
+						for l in range(len(update.images)):
+							if (update.getImage(l) is not None and update.getImage(l) != ''):
+								update.setImage(l, GiddyAPI + '/' + allUsers[i].getUsername() + '/uploads/' + update.getImage(l) + '/raw')
+							
+								#if the update image is an mp4, blank the image URL
+								dahtah = GET(update.getImage(l)[:-4])
+								if 'extension' in dahtah.keys():
+									if dahtah['extension'] == 'mp4':
+										update.setImage(l,None)
+						
+					proj.addUpdate(update)
+				
+				allUsers[i].addProject(proj)
+				proj.addUser(allUsers[i])
+				allProjects.append(proj)
 
-print("################################### going to index #######################################")
-print ("Done!")
+	print("################################### going to index #######################################")
+	print ("Done!")
 
 #Deploy webpapp
 if __name__ == "__main__":
@@ -319,6 +325,7 @@ if __name__ == "__main__":
 #ENVOY BRIDGE THING
 #11/11/2016		
 #For storing list of logged in guests
+'''
 global activeEnvoyGuests
 activeEnvoyGuests = []
 #For storing latest envoy login
@@ -379,7 +386,7 @@ for i in range(len(data['entries'])):
 #END OF ENVOY BRIDGE
 
 
-
+'''
 #print information for the first user
 #print ("Username:", allUsers[0].getUsername())
 #print ("Name:", allUsers[0].getName())

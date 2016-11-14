@@ -1,6 +1,6 @@
 '''
 Created on Oct 19, 2016
-@author: Dylan Alpiger
+@author: Dylan Alpiger, Yuval Schaal here too
 '''
 import json
 import Queue
@@ -20,6 +20,7 @@ app = Flask(__name__)
 def index():
 	return render_template("index.html", Users = allUsers, Projects = allProjects)
 
+#user class: getName(), getUserName(), getImage(), getProject(), getSkill()
 class User:
 	def __init__(self):
 		self.name = ''
@@ -57,7 +58,8 @@ class User:
 		
 	def addSkill(self, skill):
 		self.skills.append(skill)
-		
+
+#skill class: getTitle(), getLevel()		
 class Skill:
 	def __init__(self):
 		self.title = ''
@@ -75,6 +77,7 @@ class Skill:
 	def getLevel (self):
 		return self.level
 
+#project class: getName(), getTitle(), getDetail(), getImage(), getMember(), getUpdate()
 class Project:
     def __init__(self):
         self.name = ''
@@ -119,7 +122,8 @@ class Project:
         
     def setImage(self, image):
         self.image = image
-      
+     
+#update class: getName(), getDetail(), getImage()	 
 class Update:
     def __init__(self):
         self.name = ''
@@ -147,6 +151,7 @@ class Update:
     def setImage(self, i, string):
         self.images[i] = string
 
+#envoy class: getId(), getName(), getUsername(), getEmail(), getSignInTime(), getSignOutTime(), isIn()
 class Envoy:
 	def __init__(self):
 		self.id = ''
@@ -215,9 +220,9 @@ def findProj(projList, name):
             return projList[i]
 			
       
-#---MAIN---#
+#---MAIN---# could be in a class
 
-
+#APIs:
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
 EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
 
@@ -268,12 +273,13 @@ for i in range(len(allUsers)):
                 if dahtah['extension'] == 'mp4':
                     proj.setImage(None)
         
-        #if the project has already been acounted for, simply add the user to the project's team and the project to the user's list of projects
-        thisProj = findProj(allProjects, proj.getName())
+        #if the project has already been accounted for, simply add the user to the project's team and the project to the user's list of projects
+		#change to sets if wanted?
+		thisProj = findProj(allProjects, proj.getName())
         if thisProj is not None:
             allUsers[i].addProject(thisProj)
             thisProj.addUser(allUsers[i])
-        
+			
         #otherwise add the new project to the user's list, add the user to the new project's team, collect all updates for the new project, and add the new project to the list of allProjects
         else:
             #collect all updates for this new project
@@ -321,17 +327,17 @@ envoyLastLogin = Envoy()
 
 data = GET(EnvoyAPI)
 #Initial setting of last/latest login. data['entries'][0] will always be most recent login.
-if 'id' in data['entries'][0].keys()
+if 'id' in data['entries'][0].keys():
 	envoyLastLogin.setId(data['entries'][0]['id'])
-if 'your_full_name' in data['entries'][0].keys()
+if 'your_full_name' in data['entries'][0].keys():
 	envoyLastLogin.setName(data['entries'][0]['your_full_name'])
-if 'giddy_user_id' in data['entries'][0].keys()
+if 'giddy_user_id' in data['entries'][0].keys():
 	envoyLastLogin.setUsername(data['entries'][0]['giddy_user_id'])
-if 'your_email_address' in data['entries'][0].keys()
+if 'your_email_address' in data['entries'][0].keys():
 	envoyLastLogin.setEmail(data['entries'][0]['your_email_address'])
-if 'signed_in_time_local' in data['entries'][0].keys()
+if 'signed_in_time_local' in data['entries'][0].keys():
 	envoyLastLogin.setSigninTime(data['entries'][0]['signed_in_time_local'])
-if 'signed_out_time_local' in data['entries'][0].keys()
+if 'signed_out_time_local' in data['entries'][0].keys():
 	envoyLastLogin.setSignOutTime(data['entries'][0]['signed_out_time_local'])
 
 #do a quick welcome display here
@@ -344,31 +350,31 @@ data = GET(EnvoyAPI)
 envoyLogins = []
 for i in range(len(data['entries'])):
 	envoyLogins.append(Envoy())
-	if 'your_full_name' in data['entries'][i].keys()
+	if 'your_full_name' in data['entries'][i].keys():
 		envoyLogins[i].setName(data['entries'][i]['your_full_name'])
-	if 'giddy_user_id' in data['entries'][i].keys()
+	if 'giddy_user_id' in data['entries'][i].keys():
 		envoyLogins[i].setUsername(data['entries'][i]['giddy_user_id'])
-	if 'your_email_address' in data['entries'][i].keys()
+	if 'your_email_address' in data['entries'][i].keys():
 		envoyLogins[i].setEmail(data['entries'][i]['your_email_address'])
-	if 'signed_in_time_local' in data['entries'][i].keys()
+	if 'signed_in_time_local' in data['entries'][i].keys():
 		envoyLogins[i].setSigninTime(data['entries'][i]['signed_in_time_local'])
-	if 'signed_out_time_local' in data['entries'][i].keys()
+	if 'signed_out_time_local' in data['entries'][i].keys():
 		envoyLogins[i].setSignOutTime(data['entries'][i]['signed_out_time_local'])
-	if 'id' in data['entries'][i].keys()
+	if 'id' in data['entries'][i].keys():
 		envoyLogins[i].setId(data['entries'][i]['id'])
-	if (envoyLogins[i].getId() > envoyLastLogin.getId())
+	if (envoyLogins[i].getId() > envoyLastLogin.getId()):
 		#if current entry's id is > eLL's id, it is a newer login. Set latest login to current entry.
 		envoyLastLogin = envoyLogins[i]
 		#display a welcome here
 	#Now update the logged in/active users list
-	if (envoyLogins[i].isIn())
-		if ((len(activeEnvoyGuests) == 0) || (envoyLogins[i] not in activeEnvoyGuests))
+	if (envoyLogins[i].isIn()):
+		if ((len(activeEnvoyGuests) == 0) or (envoyLogins[i] not in activeEnvoyGuests)):
 			activeEnvoyGuests.append(envoyLogins[i])
-	else 
+	else:
 		#do a check to remove entry from logged in guests (if he's in list)
-		if ((len(activeEnvoyGuests) > 0) && (envoyLogins[i] in activeEnvoyGuests))
+		if ((len(activeEnvoyGuests) > 0) and (envoyLogins[i] in activeEnvoyGuests)):
 			for j in range(len(activeEnvoyGuests)):
-				if envoyLogins[i].getId() == activeEnvoyGuests[j].getId()
+				if envoyLogins[i].getId() == activeEnvoyGuests[j].getId():
 					del activeEnvoyGuests[j]
 #END OF ENVOY BRIDGE
 

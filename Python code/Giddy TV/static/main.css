@@ -52,11 +52,12 @@
 }
 
 h1 {
-	color: orange;
-	text-align: left;
+	color: #f6ce00;
+	font-size: 35pt;
 	font-weight: bold;
 	font-family: "Century Gothic";
-	text-shadow: 2px 2px #ff0000;
+	text-shadow: 2px 2px #cf0060;
+	text-align: center;
 }
 
 h2 {
@@ -64,11 +65,15 @@ h2 {
 }
 
 h3 {
-	font-size: 50pt;
-	color: yellow;
+	font-size: 25pt;
+	color: #f6ce00;
 	font-weight: bold;
 	font-family: "Century Gothic";
-	text-shadow: 2px 2px #ff0000;
+	text-shadow: 2px 2px #cf0060;
+}
+
+ul {
+	font-size: 15pt;
 }
 
 .container {
@@ -77,5 +82,11 @@ h3 {
 
 .crop {
 	height: 500px;
+	overflow: hidden;
+}
+
+.squareCrop {
+	width: 100px;
+	height: 100px;
 	overflow: hidden;
 }

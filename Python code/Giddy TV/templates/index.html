@@ -7,7 +7,104 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style>
+    .carousel-inner img {
+      <!--width: 100%; /* Set width to 100% */-->
+	  <!--max-height: 375px;-->
+	  min-height: 200px;
+    }
+    <!-- Hide the carousel text when the screen is less than 600 pixels wide -->
+    @media (max-width: 600px) {
+      .carousel-caption {
+        display: none; 
+      }
+    }
+	
+	.carousel-caption {
+		width: 100%;
+		position: absolute;
+		left: 5px;
+		text-align: left;
+	}
+	
+	.vertical .carousel-inner {
+	  <!--height: 500px;-->
+	}
+		
+	.carousel.vertical .item {
+	  -webkit-transition: 0.6s ease-in-out top;
+	  -moz-transition: 0.6s ease-in-out top;
+	  -ms-transition: 0.6s ease-in-out top;
+	  -o-transition: 0.6s ease-in-out top;
+	  transition: 0.6s ease-in-out top;
+	}
+	.carousel.vertical .active {
+	  top: 0;
+	}
+	.carousel.vertical .next {
+	  top: 100%;
+	}
+	.carousel.vertical .prev {
+	  top: -100%;
+	}
+	.carousel.vertical .next.left,
+	.carousel.vertical .prev.right {
+	  top: 0;
+	}
+	.carousel.vertical .active.left {
+	  top: -100%;
+	}
+	.carousel.vertical .active.right {
+	  top: 100%;
+	}
+	.carousel.vertical .item {
+		left: 0;
+	}
+	
+	h1 {
+		color: #f6ce00;
+		font-size: 35pt;
+		font-weight: bold;
+		font-family: "Century Gothic";
+		text-shadow: 2px 2px #cf0060;
+		text-align: center;
+	}
+	
+	h2 {
+		font-size: 20pt;
+	}
+	
+	h3 {
+		font-size: 25pt;
+		color: #f6ce00;
+		font-weight: bold;
+		font-family: "Century Gothic";
+		text-shadow: 2px 2px #cf0060;
+	}
+	
+	ul {
+		font-size: 15pt;
+	}
+	
+	.container {
+		padding-top: 0%;
+	}
+	
+	.crop {
+		height: 500px;
+		overflow: hidden;
+	}
+	
+	.squareCrop {
+		width: 100px;
+		height: 100px;
+		overflow: hidden;
+	}
+  </style>
+
   <link rel="stylesheet" href="static/main.css">
+
 </head>
 <body>
 <script>
@@ -37,8 +134,37 @@ function update_values(){
 }
 </script>
 
-<div class="container">
+<!--<div class="container">-->
 <div class="row">
+
+  <div class="col-sm-2">
+  <!-- Vertical Carousel -->
+	<h1>Feed</h1>
+	<hr>
+    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+		<!--wrapper for slides-->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Update Title</h3>
+				<h2 style="color:#f6ce00; text-align:center;">Project Title</h2>
+				<hr>
+				<h2>Details</h2>
+			</div>
+			
+			{% for i in range(Projects|length) %}
+				{% for j in range(Projects[i].updates|length) %}
+					{% if Projects[i].getUpdate(j).getImage(0) is not none and Projects[i].getImage() != '' %}
+					<div class="item">
+						<p style="text-align:center"><img src={{Projects[i].getUpdate(j).getImage(0)}} alt="Update Image" width="100%"></p>
+						<h3 align="center">{{Projects[i].getUpdate(j).getName()}}</h3>
+						<h2 style="color:#f6ce00; text-align:center;">{{Projects[i].getTitle()}}</h2>
+						<hr>
+						<h2>{{Projects[i].getUpdate(j).getDetail()}}</h2>
+					</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
   <!--<script>setTimeout(update_values,1000);</script>-->
   <!-- Horizontal Carousel -->
   <div class="col-sm-8">
@@ -50,10 +176,16 @@ function update_values(){
 			<h1>Maker Space</h1>
 		</div>
 	</div>
+  </div>
+  
+  <!-- Horizontal Carousel -->
+  <div class="col-sm-7">
+	<h1>Maker Space</h1>
+	<hr>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Wrapper for slides -->
-      <div class="carousel-inner" role="listbox">
-        
+	  <!-- Wrapper for slides -->
+	  <div class="carousel-inner" role="listbox">
+		
 		<!--First Slide-->
 		<div class="item active">
 			<div class="crop"><img src="static\wallpaper.png" alt="Wallpaper" width="100%"></div>
@@ -81,21 +213,27 @@ function update_values(){
 			</div>
 			{% endif %}
 		{% endfor %}
-      
+	  
 	  </div>
-    </div>
+	</div>
   </div>
 
   <!-- Vertical Carousel -->
-  <div class="col-sm-4">
-	<div><h1 align="center">Here & Now</h1></div>
-    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+  <div class="col-sm-3">
+	<h1>Here & Now</h1>
+	<hr>
+	<div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			
 			<div class="item active">
-				<img src="https://placehold.it/800x400?text=IMAGE" alt="Image">
-				<p>Everyone whom is here now</p>
+				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Giddy Card</h3>
+				<hr>
+				<h2 style="color:#f6ce00">Skills</h2>
+				<ul><li>Skilles are listed here</li></ul>
+				<h2 style="color:#f6ce00">Projects</h2>
+				<ul><li>Projects are listed here</li></ul>
 			</div>
 			
 			{% for i in range(Users|length) %}
@@ -104,13 +242,13 @@ function update_values(){
 				<p align="center">@{{Users[i].getUsername()}}</p>
 				<h3 style="font-size:35pt" align="center">{{Users[i].getName()}}</h3>
 				<hr>
-				<h2 style="color:orange">Skills</h2>
+				<h2 style="color:#f6ce00">Skills</h2>
 				<ul>
 					{% for j in range(Users[i].skills|length) %}
-						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:red">level {{Users[i].getSkill(j).getLevel()}}</span></li>
+						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:#cf0060">level {{Users[i].getSkill(j).getLevel()}}</span></li>
 					{% endfor %}
 				</ul>
-				<h2 style="color:orange">Projects</h2>
+				<h2 style="color:#f6ce00">Projects</h2>
 				<ul>
 					{% for k in range(Users[i].projects|length) %}
 						<li>{{Users[i].getProject(k).getTitle()}}</li>
@@ -123,6 +261,6 @@ function update_values(){
   </div>
   <!--<h2>This app is a work in progress. Have a suggestion? Let us know on Slack at #GiddyTV</h2>-->
 </div>
-</div>
+<!--</div>-->
 </body>
 </html>

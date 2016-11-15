@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   <style>
     .carousel-inner img {
       <!--width: 100%; /* Set width to 100% */-->
@@ -101,11 +102,41 @@
 		overflow: hidden;
 	}
   </style>
+
+  <link rel="stylesheet" href="static/main.css">
+
 </head>
 <body>
+<script>
+function update_values(){
+	/*$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	$.getJSON($SCRIPT_ROOT+"/_stuff",
+		function(data) {
+			//$("#Users").text(data.Users+" %")
+			//$("#Projects").text(data.Projects+" %")
+		});*/
+	var deferredData = new jQuery.Deferred();
+
+    $.ajax({
+        type: "GET",
+        url: "/ajax",
+        dataType: "json",
+        success: function(data) { 
+            deferredData.resolve(data);
+            },
+        complete: function(xhr, textStatus) {
+            console.log("AJAX Request complete -> ", xhr, " -> ", textStatus);
+            }
+    });
+	console.log("updated values!");
+	console.log(deferredData);
+	setTimeout(update_values,9500);
+}
+</script>
 
 <!--<div class="container">-->
 <div class="row">
+
   <div class="col-sm-2">
   <!-- Vertical Carousel -->
 	<h1>Feed</h1>
@@ -134,7 +165,15 @@
 					{% endif %}
 				{% endfor %}
 			{% endfor %}
-			
+  <!--<script>setTimeout(update_values,1000);</script>-->
+  <!-- Horizontal Carousel -->
+  <div class="col-sm-8">
+	<div class="row">
+		<div class="col-sm-4">
+			<img src="static\Giddy.PNG" alt="Giddy" style="width:30%"><!-- this is really called from script.py-->
+		</div>
+		<div class="col-sm-8">
+			<h1>Maker Space</h1>
 		</div>
 	</div>
   </div>
@@ -149,7 +188,7 @@
 		
 		<!--First Slide-->
 		<div class="item active">
-			<div class="crop"><img src="assets\wallpaper.png" alt="Wallpaper" width="100%"></div>
+			<div class="crop"><img src="static\wallpaper.png" alt="Wallpaper" width="100%"></div>
 			<!--<img src="assets\Giddy.PNG" width="30%">-->
 			<h3>Howdy!</h3>
 			<h2>Welcome to the FirstBuild Maker Space! Where imagination meets reality.</h2>

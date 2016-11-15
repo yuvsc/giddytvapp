@@ -62,11 +62,12 @@
 	}
 	
 	h1 {
-		color: orange;
-		text-align: left;
+		color: #f6ce00;
+		font-size: 35pt;
 		font-weight: bold;
 		font-family: "Century Gothic";
-		text-shadow: 2px 2px #ff0000;
+		text-shadow: 2px 2px #cf0060;
+		text-align: center;
 	}
 	
 	h2 {
@@ -74,11 +75,15 @@
 	}
 	
 	h3 {
-		font-size: 50pt;
-		color: yellow;
+		font-size: 25pt;
+		color: #f6ce00;
 		font-weight: bold;
 		font-family: "Century Gothic";
-		text-shadow: 2px 2px #ff0000;
+		text-shadow: 2px 2px #cf0060;
+	}
+	
+	ul {
+		font-size: 15pt;
 	}
 	
 	.container {
@@ -89,27 +94,59 @@
 		height: 500px;
 		overflow: hidden;
 	}
+	
+	.squareCrop {
+		width: 100px;
+		height: 100px;
+		overflow: hidden;
+	}
   </style>
 </head>
 <body>
 
-<div class="container">
+<!--<div class="container">-->
 <div class="row">
-  
-  <!-- Horizontal Carousel -->
-  <div class="col-sm-8">
-	<div class="row">
-		<div class="col-sm-4">
-			<img src="assets\Giddy.PNG" alt="Giddy" style="width:30%">
-		</div>
-		<div class="col-sm-8">
-			<h1>Maker Space</h1>
+  <div class="col-sm-2">
+  <!-- Vertical Carousel -->
+	<h1>Feed</h1>
+	<hr>
+    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+		<!--wrapper for slides-->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Update Title</h3>
+				<h2 style="color:#f6ce00; text-align:center;">Project Title</h2>
+				<hr>
+				<h2>Details</h2>
+			</div>
+			
+			{% for i in range(Projects|length) %}
+				{% for j in range(Projects[i].updates|length) %}
+					{% if Projects[i].getUpdate(j).getImage(0) is not none and Projects[i].getImage() != '' %}
+					<div class="item">
+						<p style="text-align:center"><img src={{Projects[i].getUpdate(j).getImage(0)}} alt="Update Image" width="100%"></p>
+						<h3 align="center">{{Projects[i].getUpdate(j).getName()}}</h3>
+						<h2 style="color:#f6ce00; text-align:center;">{{Projects[i].getTitle()}}</h2>
+						<hr>
+						<h2>{{Projects[i].getUpdate(j).getDetail()}}</h2>
+					</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+			
 		</div>
 	</div>
+  </div>
+  
+  <!-- Horizontal Carousel -->
+  <div class="col-sm-7">
+	<h1>Maker Space</h1>
+	<hr>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Wrapper for slides -->
-      <div class="carousel-inner" role="listbox">
-        
+	  <!-- Wrapper for slides -->
+	  <div class="carousel-inner" role="listbox">
+		
 		<!--First Slide-->
 		<div class="item active">
 			<div class="crop"><img src="assets\wallpaper.png" alt="Wallpaper" width="100%"></div>
@@ -137,21 +174,27 @@
 			</div>
 			{% endif %}
 		{% endfor %}
-      
+	  
 	  </div>
-    </div>
+	</div>
   </div>
 
   <!-- Vertical Carousel -->
-  <div class="col-sm-4">
-	<div><h1 align="center">Here & Now</h1></div>
-    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+  <div class="col-sm-3">
+	<h1>Here & Now</h1>
+	<hr>
+	<div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			
 			<div class="item active">
-				<img src="https://placehold.it/800x400?text=IMAGE" alt="Image">
-				<p>Everyone whom is here now</p>
+				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Giddy Card</h3>
+				<hr>
+				<h2 style="color:#f6ce00">Skills</h2>
+				<ul><li>Skilles are listed here</li></ul>
+				<h2 style="color:#f6ce00">Projects</h2>
+				<ul><li>Projects are listed here</li></ul>
 			</div>
 			
 			{% for i in range(Users|length) %}
@@ -160,13 +203,13 @@
 				<p align="center">@{{Users[i].getUsername()}}</p>
 				<h3 style="font-size:35pt" align="center">{{Users[i].getName()}}</h3>
 				<hr>
-				<h2 style="color:orange">Skills</h2>
+				<h2 style="color:#f6ce00">Skills</h2>
 				<ul>
 					{% for j in range(Users[i].skills|length) %}
-						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:red">level {{Users[i].getSkill(j).getLevel()}}</span></li>
+						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:#cf0060">level {{Users[i].getSkill(j).getLevel()}}</span></li>
 					{% endfor %}
 				</ul>
-				<h2 style="color:orange">Projects</h2>
+				<h2 style="color:#f6ce00">Projects</h2>
 				<ul>
 					{% for k in range(Users[i].projects|length) %}
 						<li>{{Users[i].getProject(k).getTitle()}}</li>
@@ -179,6 +222,6 @@
   </div>
   <!--<h2>This app is a work in progress. Have a suggestion? Let us know on Slack at #GiddyTV</h2>-->
 </div>
-</div>
+<!--</div>-->
 </body>
 </html>

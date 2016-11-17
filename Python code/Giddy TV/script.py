@@ -3,8 +3,8 @@ Created on Oct 19, 2016
 @author: Dylan Alpiger, Yuval Schaal here too
 '''
 import json
-import Queue
-import threading
+#import Queue
+#import threading
 import requests
 from datetime import datetime
 from flask import Flask, render_template
@@ -166,6 +166,7 @@ class Envoy:
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
+		self.user = ''
 		
 	def getId(self):
 		return self.id
@@ -185,6 +186,9 @@ class Envoy:
 	def getSignOutTime(self):
 		return self.signOutTime
 		
+	def getUser(self):
+		return user
+		
 	def setId(self, x):
 		self.id = x;
 		
@@ -202,6 +206,9 @@ class Envoy:
 	
 	def setSignOutTime(self, o):
 		self.signOutTime = o
+		
+	def setUser(self, user):
+		self.user = user
 		
 	#returns TRUE if the person is currently in building. FALSE otherwise
 	def isIn(self):
@@ -224,6 +231,11 @@ def findProj(projList, name):
     for i in range(len(projList)):
         if projList[i].getName() == name:
             return projList[i]
+			
+def findUser(userList, giddyName):
+	for i in range(len(userList)):
+		if userList[i].getUsername() == giddyName:
+			return userList[i]
 			
       
 #---MAIN---# could be in a class
@@ -346,6 +358,8 @@ if 'signed_in_time_local' in data['entries'][0].keys():
 	envoyLastLogin.setSigninTime(data['entries'][0]['signed_in_time_local'])
 if 'signed_out_time_local' in data['entries'][0].keys():
 	envoyLastLogin.setSignOutTime(data['entries'][0]['signed_out_time_local'])
+	
+#envoyLastLogin.setUser(findUser(allUsers, envoyLastLogin.getUsername()))
 
 #do a quick welcome display here
 	

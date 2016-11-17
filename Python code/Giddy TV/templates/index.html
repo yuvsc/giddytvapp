@@ -39,10 +39,17 @@ function update_values(){
 }
 </script>
 
-<!--<div class="container">-->
-<div class="row">
+<script>
+	$(document).ready(
+		function(){
+			$(".Welcome").hide();
+		}
+	);
+</script>
 
-  <div class="col-sm-2">
+<!--<div class="container">-->
+<div class="row" id="Main">
+  <div class="col-sm-3">
   <!-- Vertical Carousel -->
 	<h1>Feed</h1>
 	<hr>
@@ -50,12 +57,26 @@ function update_values(){
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			<div class="item active">
-				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<p style="text-align:center"><img src="static\Giddy.PNG" alt="Giddy" width="55%"></p>
 				<h3 align="center">Update Title</h3>
 				<h2 style="color:#f6ce00; text-align:center;">Project Title</h2>
 				<hr>
 				<h2>Details</h2>
 			</div>
+			
+			<!--
+			{% for i in range(Projects|length) %}
+				{% if Projects[i].updates|length != 0 %}
+				<div class="item active">
+					<p style="text-align:center"><img src={{Projects[0].getUpdate(0).getImage(0)}} alt="Update Image" width="100%"></p>
+					<h3 align="center">{{Projects[0].getUpdate(0).getName()}}</h3>
+					<h2 style="color:#f6ce00; text-align:center;">{{Projects[0].getTitle()}}</h2>
+					<hr>
+					<h2>{{Projects[0].getUpdate(0).getDetail()}}</h2>
+				</div>
+				{% endif %}
+			{% endfor %}
+			-->
 			
 			{% for i in range(Projects|length) %}
 				{% for j in range(Projects[i].updates|length) %}
@@ -70,21 +91,13 @@ function update_values(){
 					{% endif %}
 				{% endfor %}
 			{% endfor %}
-  <!--<script>setTimeout(update_values,1000);</script>-->
-  <!-- Horizontal Carousel -->
-  <div class="col-sm-8">
-	<div class="row">
-		<div class="col-sm-4">
-			<img src="static\Giddy.PNG" alt="Giddy" style="width:30%"><!-- this is really called from script.py-->
-		</div>
-		<div class="col-sm-8">
-			<h1>Maker Space</h1>
 		</div>
 	</div>
   </div>
+  <!--<script>setTimeout(update_values,1000);</script>-->
   
   <!-- Horizontal Carousel -->
-  <div class="col-sm-7">
+  <div class="col-sm-6">
 	<h1>Maker Space</h1>
 	<hr>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -125,14 +138,14 @@ function update_values(){
 
   <!-- Vertical Carousel -->
   <div class="col-sm-3">
-	<h1>Here & Now</h1>
+	<h1>Who's Who</h1>
 	<hr>
 	<div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			
 			<div class="item active">
-				<p style="text-align:center"><img src="assets\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<p style="text-align:center"><img src="static\Giddy.PNG" alt="Giddy" width="55%"></p>
 				<h3 align="center">Giddy Card</h3>
 				<hr>
 				<h2 style="color:#f6ce00">Skills</h2>
@@ -145,7 +158,7 @@ function update_values(){
 			<div class="item">
 				<p style="text-align:center"><img src= {{Users[i].getImage()}} alt="Image" width="55%"></p>
 				<p align="center">@{{Users[i].getUsername()}}</p>
-				<h3 style="font-size:35pt" align="center">{{Users[i].getName()}}</h3>
+				<h3 align="center">{{Users[i].getName()}}</h3>
 				<hr>
 				<h2 style="color:#f6ce00">Skills</h2>
 				<ul>
@@ -167,5 +180,12 @@ function update_values(){
   <!--<h2>This app is a work in progress. Have a suggestion? Let us know on Slack at #GiddyTV</h2>-->
 </div>
 <!--</div>-->
+
+<!--Welcome Screen-->
+<div class="Welcome">
+	<img style="margin-top:15%" src="static\Giddy.PNG" alt="Giddy" width="25%">
+	<h3 style="font-size:50pt; margin-bottom:15%">Welcome [User's full name]!</h3>
+</div>
+
 </body>
 </html>

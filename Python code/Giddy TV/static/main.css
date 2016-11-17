@@ -52,11 +52,11 @@
 }
 
 h1 {
-	color: #f6ce00;
+	color: #f6ce00;	/*yellow*/
 	font-size: 35pt;
 	font-weight: bold;
 	font-family: "Century Gothic";
-	text-shadow: 2px 2px #cf0060;
+	text-shadow: 2px 2px #cf0060;	/*plum*/
 	text-align: center;
 }
 
@@ -65,15 +65,20 @@ h2 {
 }
 
 h3 {
-	font-size: 25pt;
-	color: #f6ce00;
+	font-size: 35pt;
+	color: #f6ce00;		/*yellow*/
 	font-weight: bold;
 	font-family: "Century Gothic";
-	text-shadow: 2px 2px #cf0060;
+	text-shadow: 2px 2px #cf0060;	/*plum*/
 }
 
 ul {
 	font-size: 15pt;
+}
+
+#Main {
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .container {
@@ -89,4 +94,10 @@ ul {
 	width: 100px;
 	height: 100px;
 	overflow: hidden;
+}
+
+.Welcome {
+	background-color: #fb7b08;	/*orange*/
+	text-align: center;
+	overflow: auto;
 }

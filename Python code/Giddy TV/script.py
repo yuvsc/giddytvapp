@@ -3,11 +3,11 @@ Created on Oct 19, 2016
 @author: Dylan Alpiger, Yuval Schaal here too
 '''
 import json
-import Queue
-import threading
+#import Queue
+#import threading
 import requests
 from datetime import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 global allUsers
 global allProjects
@@ -23,9 +23,21 @@ def index():
 	
 @app.route('/ajax')
 def ajax() :
-    main()
-    return Response(json.dumps(Users), mimetype='application/json')
+	main();
+	return Response(json.dumps(Users), mimetype='application/json')
 
+	
+#ENVOY STUFF
+#11/17/2016
+global envoyLL
+	
+@app.route('/envoy')
+def envoy() :
+	if (envoyLastLogin()):
+		return (envoyLL.getName())
+	else: return ('')
+
+	
 #user class: getName(), getUserName(), getImage(), getProject(), getSkill()
 class User:
 	def __init__(self):
@@ -209,14 +221,13 @@ class Envoy:
 		if (self.signInTime[:10] == currentDate[:10] and self.signOutTime == ""):
 			return True
 		else:
-			return False
-
+			return False			
+			
 #Perform GET request      
 def GET(a):
     r = requests.get(a)
     r.json()
     return json.loads(r.text)
-
 	
 #11/11/2016 - What does this return if a project is not found?	
 #Find specific project within allProjects by it's name
@@ -224,13 +235,35 @@ def findProj(projList, name):
     for i in range(len(projList)):
         if projList[i].getName() == name:
             return projList[i]
-			
-      
+	
 #---MAIN---# could be in a class
 
 #APIs:
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
-EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
+#EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
+EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb717b88c1ec8'
+
+#init last envoy login
+envoyLL = Envoy()
+#Initial setting of last/latest login. data['entries'][0] will always be most recent login.
+data = GET(EnvoyAPI)
+if 'id' in data[0].keys():
+	envoyLL.setId(data[0]['id'])
+if 'your_full_name' in data[0].keys():
+	envoyLL.setName(data[0]['your_full_name'])
+
+#11/17/2016
+#Function to return name of latest login. Empty string if latest login is not new.
+def envoyLastLogin():
+	data = GET(EnvoyAPI)
+	if 'id' in data[0].keys():
+		if (data[0]['id'] > envoyLL.getId()):
+			envoyLL.setId(data[0]['id'])
+			if 'your_full_name' in data[0].keys():
+				envoyLL.setName(data[0]['your_full_name'])
+				return True
+	return False
+	
 def main():
 	#Fill list of users
 	data = GET(GiddyAPI)
@@ -322,10 +355,13 @@ def main():
 if __name__ == "__main__":
 	app.run()
 
+
+	
+'''OLD
 #ENVOY BRIDGE THING
 #11/11/2016		
 #For storing list of logged in guests
-'''
+
 global activeEnvoyGuests
 activeEnvoyGuests = []
 #For storing latest envoy login
@@ -384,9 +420,9 @@ for i in range(len(data['entries'])):
 				if envoyLogins[i].getId() == activeEnvoyGuests[j].getId():
 					del activeEnvoyGuests[j]
 #END OF ENVOY BRIDGE
-
-
 '''
+
+
 #print information for the first user
 #print ("Username:", allUsers[0].getUsername())
 #print ("Name:", allUsers[0].getName())

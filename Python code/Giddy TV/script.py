@@ -255,8 +255,7 @@ def main():
 		if 'avatar' in data['users'][i].keys():
 			allUsers[i].setImage(data['users'][i]['avatar'])
 			if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
-				allUsers[i].setImage(allUsers[i].getImage() + '/raw')
-				
+				allUsers[i].setImage(allUsers[i].getImage() + '/raw')		
 		if 'tags' in data['users'][i].keys():
 			for j in range(len(data['users'][i]['tags'])):
 				skill = Skill()
@@ -266,6 +265,9 @@ def main():
 					skill.setLevel(data['users'][i]['tags'][j]['level'])
 					
 				allUsers[i].addSkill(skill)
+				
+		if allUsers[i].getImage() == '' or allUsers[i].getImage() == 'https://firstbuild-stg.herokuapp.comfailed/raw':
+			allUsers[i].setImage('static\Giddy.PNG')
 					
 		
 	#Fill users with their projects

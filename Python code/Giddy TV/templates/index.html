@@ -64,20 +64,6 @@ function update_values(){
 				<h2>Details</h2>
 			</div>
 			
-			<!--
-			{% for i in range(Projects|length) %}
-				{% if Projects[i].updates|length != 0 %}
-				<div class="item active">
-					<p style="text-align:center"><img src={{Projects[0].getUpdate(0).getImage(0)}} alt="Update Image" width="100%"></p>
-					<h3 align="center">{{Projects[0].getUpdate(0).getName()}}</h3>
-					<h2 style="color:#f6ce00; text-align:center;">{{Projects[0].getTitle()}}</h2>
-					<hr>
-					<h2>{{Projects[0].getUpdate(0).getDetail()}}</h2>
-				</div>
-				{% endif %}
-			{% endfor %}
-			-->
-			
 			{% for i in range(Projects|length) %}
 				{% for j in range(Projects[i].updates|length) %}
 					{% if Projects[i].getUpdate(j).getImage(0) is not none and Projects[i].getImage() != '' %}

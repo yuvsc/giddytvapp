@@ -259,8 +259,8 @@ def findProj(projList, name):
 #---MAIN---#
 #APIs:
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
-#EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
-EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb717b88c1ec8'
+EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1' #firstbuild's
+#EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb717b88c1ec8' #used for testing
 def main():
 	global isMainDone
 	isMainDone = False

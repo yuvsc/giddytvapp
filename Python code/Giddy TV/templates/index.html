@@ -7,52 +7,129 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   <link rel="stylesheet" href="static/main.css">
+
 </head>
 <body>
 <script>
-function update_values(){
+function get_envoy_value(){
+	var EnvoyValueRecieved = "";
+	$.ajax({
+		type : "GET",
+		url : "/envoy",
+		//data: JSON.stringify(data, null, '\t'),
+		contentType: 'application/json;charset=UTF-8',
+		success: function(result) {
+			//console.log(result);
+			var EnvoyValueRecieved = String(result);
+			console.log("got envoy values!");
+			//console.log(EnvoyValueRecieved);
+			if(EnvoyValueRecieved!=""){
+				console.log(EnvoyValueRecieved);
+				welcome(EnvoyValueRecieved);
+			} else {
+				//console.log("got nothing");
+			}
+			setTimeout(get_envoy_value,6000);
+		}
+	});
 	/*$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 	$.getJSON($SCRIPT_ROOT+"/_stuff",
 		function(data) {
 			//$("#Users").text(data.Users+" %")
 			//$("#Projects").text(data.Projects+" %")
 		});*/
-	var deferredData = new jQuery.Deferred();
-    $.ajax({
+	//var deferredData = new jQuery.Deferred();
+    /*$.ajax({
         type: "GET",
-        url: "/ajax",
+        url: "/envoy",
         dataType: "json",
         success: function(data) { 
-            deferredData.resolve(data);
+            console.log(data);
+			deferredData.resolve(data);
             },
         complete: function(xhr, textStatus) {
-            console.log("AJAX Request complete -> ", xhr, " -> ", textStatus);
+           // console.log("AJAX Request complete -> ", xhr, " -> ", textStatus);
             }
-    });
-	console.log("updated values!");
-	console.log(deferredData);
-	setTimeout(update_values,9500);
+    });*/
+};
+function welcome(name){
+	$("#Main").hide();
+	$(".Welcome").show();
+	//make something in html change to name
+	element = document.getElementById('visitor-name');
+	element.innerHTML = name.replace(/(\r\n|\n|\r)/gm,"");;
+	setTimeout(function () { // wait 3 seconds and hide welcome
+		$(".Welcome").hide();
+		$("#Main").show();
+	}, 3000);
+};
+function reload_page(){
+	$.ajax({
+		type : "GET",
+		url : "/main",
+		contentType: 'application/json;charset=UTF-8',
+		success: function(result) {
+			console.log("main has been updated");
+			window.location.reload(true);
+		}
+	});
 }
 </script>
 
-<div class="container">
-<div class="row">
-  <!--<script>setTimeout(update_values,1000);</script>-->
-  <!-- Horizontal Carousel -->
-  <div class="col-sm-8">
-	<div class="row">
-		<div class="col-sm-4">
-			<img src="static\Giddy.PNG" alt="Giddy" style="width:30%"><!-- this is really called from script.py-->
-		</div>
-		<div class="col-sm-8">
-			<h1>Maker Space</h1>
+<script>
+	$(document).ready(
+		function(){
+			$(".Welcome").hide();
+			setInterval(function(){ reload_page(); },60*60000); // reload the page every hour
+		}
+	);
+</script>
+
+<!--<div class="container">-->
+<div class="row" id="Main">
+  <div class="col-sm-3">
+  <!-- Vertical Carousel -->
+	<h1>Feed</h1>
+	<hr>
+    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+		<!--wrapper for slides-->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<p style="text-align:center"><img src="static\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Update Title</h3>
+				<h2 style="color:#f6ce00; text-align:center;">Project Title</h2>
+				<hr>
+				<h2>Details</h2>
+			</div>
+			
+			{% for i in range(Projects|length) %}
+				{% for j in range(Projects[i].updates|length) %}
+					{% if Projects[i].getUpdate(j).getImage(0) is not none and Projects[i].getImage() != '' %}
+					<div class="item">
+						<p style="text-align:center"><img src={{Projects[i].getUpdate(j).getImage(0)}} alt="Update Image" width="100%"></p>
+						<h3 align="center">{{Projects[i].getUpdate(j).getName()}}</h3>
+						<h2 style="color:#f6ce00; text-align:center;">{{Projects[i].getTitle()}}</h2>
+						<hr>
+						<h2>{{Projects[i].getUpdate(j).getDetail()}}</h2>
+					</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
 		</div>
 	</div>
+  </div>
+  <script>setTimeout(get_envoy_value,1000);</script>
+  
+  <!-- Horizontal Carousel -->
+  <div class="col-sm-6">
+	<h1>Maker Space</h1>
+	<hr>
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
-      <!-- Wrapper for slides -->
-      <div class="carousel-inner" role="listbox">
-        
+	  <!-- Wrapper for slides -->
+	  <div class="carousel-inner" role="listbox">
+		
 		<!--First Slide-->
 		<div class="item active">
 			<div class="crop"><img src="static\wallpaper.png" alt="Wallpaper" width="100%"></div>
@@ -80,36 +157,42 @@ function update_values(){
 			</div>
 			{% endif %}
 		{% endfor %}
-      
+	  
 	  </div>
-    </div>
+	</div>
   </div>
 
   <!-- Vertical Carousel -->
-  <div class="col-sm-4">
-	<div><h1 align="center">Here & Now</h1></div>
-    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+  <div class="col-sm-3">
+	<h1>Who's Who</h1>
+	<hr>
+	<div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			
 			<div class="item active">
-				<img src="https://placehold.it/800x400?text=IMAGE" alt="Image">
-				<p>Everyone whom is here now</p>
+				<p style="text-align:center"><img src="static\Giddy.PNG" alt="Giddy" width="55%"></p>
+				<h3 align="center">Giddy Card</h3>
+				<hr>
+				<h2 style="color:#f6ce00">Skills</h2>
+				<ul><li>Skilles are listed here</li></ul>
+				<h2 style="color:#f6ce00">Projects</h2>
+				<ul><li>Projects are listed here</li></ul>
 			</div>
 			
 			{% for i in range(Users|length) %}
 			<div class="item">
 				<p style="text-align:center"><img src= {{Users[i].getImage()}} alt="Image" width="55%"></p>
 				<p align="center">@{{Users[i].getUsername()}}</p>
-				<h3 style="font-size:35pt" align="center">{{Users[i].getName()}}</h3>
+				<h3 align="center">{{Users[i].getName()}}</h3>
 				<hr>
-				<h2 style="color:orange">Skills</h2>
+				<h2 style="color:#f6ce00">Skills</h2>
 				<ul>
 					{% for j in range(Users[i].skills|length) %}
-						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:red">level {{Users[i].getSkill(j).getLevel()}}</span></li>
+						<li>{{Users[i].getSkill(j).getTitle()}} - <span style="color:#cf0060">level {{Users[i].getSkill(j).getLevel()}}</span></li>
 					{% endfor %}
 				</ul>
-				<h2 style="color:orange">Projects</h2>
+				<h2 style="color:#f6ce00">Projects</h2>
 				<ul>
 					{% for k in range(Users[i].projects|length) %}
 						<li>{{Users[i].getProject(k).getTitle()}}</li>
@@ -122,6 +205,13 @@ function update_values(){
   </div>
   <!--<h2>This app is a work in progress. Have a suggestion? Let us know on Slack at #GiddyTV</h2>-->
 </div>
+<!--</div>-->
+
+<!--Welcome Screen-->
+<div class="Welcome">
+	<img style="margin-top:15%" src="static\Giddy.PNG" alt="Giddy" width="25%">
+	<h3 style="font-size:50pt; margin-bottom:15%">Welcome <div id='visitor-name' class='visitor-name'></div>!</h3>
 </div>
+
 </body>
 </html>

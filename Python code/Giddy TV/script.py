@@ -244,7 +244,7 @@ def findUser(userList, giddyName):
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
 EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
 def main():
-	#Fill list of users
+	#Collect user data
 	data = GET(GiddyAPI)
 	for i in range(len(data['users'])):
 		allUsers.append(User())
@@ -265,12 +265,13 @@ def main():
 					skill.setLevel(data['users'][i]['tags'][j]['level'])
 					
 				allUsers[i].addSkill(skill)
-				
+		
+		#if no avatar, use giddy logo as default		
 		if allUsers[i].getImage() == '' or allUsers[i].getImage() == 'https://firstbuild-stg.herokuapp.comfailed/raw':
 			allUsers[i].setImage('static\Giddy.PNG')
 					
 		
-	#Fill users with their projects
+	#Collect project data
 	for i in range(len(allUsers)):
 		s = GiddyAPI + '/' + allUsers[i].getUsername() + '/prototypes'
 		data = GET(s)

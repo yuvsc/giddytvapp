@@ -1,30 +1,60 @@
 '''
 Created on Oct 19, 2016
-@author: Dylan Alpiger, Yuval Schaal here too
+@author: Dylan Alpiger, Yuval Schaal here too, and Michael Dudrey
 '''
 import json
-#import Queue
-#import threading
+import Queue
+import threading
 import requests
 from datetime import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
+import traceback
+import time
 
 global allUsers
 global allProjects
 allUsers = []
 allProjects = []
+global isMainDone 
+isMainDone = True #refresh only when main is done
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=["GET"])
 def index():
-	main();#call main
+	#main();#call main
 	return render_template("index.html", Users = allUsers, Projects = allProjects)
+
+@app.route('/main', methods=["GET"])
+def ma():#used to refresh main
+	main()
+	return "hey"
 	
-@app.route('/ajax')
-def ajax() :
-    main()
-    return Response(json.dumps(Users), mimetype='application/json')
+@app.route('/envoy')
+def envoy() :
+	if (envoyLastLogin()):
+		return (envoyLL.getName())
+	else: return ('')
+
+#################################################### all envoy things
+
+	
+#11/17/2016
+#Function to return name of latest login. Empty string if latest login is not new.
+def envoyLastLogin():
+	data = GET(EnvoyAPI)
+	if 'id' in data[0].keys():
+		if (data[0]['id'] > envoyLL.getId()):
+			envoyLL.setId(data[0]['id'])
+			if 'your_full_name' in data[0].keys():
+				envoyLL.setName(data[0]['your_full_name'])
+				return True
+	return False
+
+#ENVOY STUFF
+#11/17/2016
+
+##################################################### end enboy things	
 
 #user class: getName(), getUserName(), getImage(), getProject(), getSkill()
 class User:
@@ -156,7 +186,7 @@ class Update:
         
     def setImage(self, i, string):
         self.images[i] = string
-
+		
 #envoy class: getId(), getName(), getUsername(), getEmail(), getSignInTime(), getSignOutTime(), isIn()
 class Envoy:
 	def __init__(self):
@@ -166,7 +196,6 @@ class Envoy:
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
-		self.user = ''
 		
 	def getId(self):
 		return self.id
@@ -186,9 +215,6 @@ class Envoy:
 	def getSignOutTime(self):
 		return self.signOutTime
 		
-	def getUser(self):
-		return user
-		
 	def setId(self, x):
 		self.id = x;
 		
@@ -206,9 +232,6 @@ class Envoy:
 	
 	def setSignOutTime(self, o):
 		self.signOutTime = o
-		
-	def setUser(self, user):
-		self.user = user
 		
 	#returns TRUE if the person is currently in building. FALSE otherwise
 	def isIn(self):
@@ -232,19 +255,25 @@ def findProj(projList, name):
         if projList[i].getName() == name:
             return projList[i]
 			
-def findUser(userList, giddyName):
-	for i in range(len(userList)):
-		if userList[i].getUsername() == giddyName:
-			return userList[i]
-			
       
-#---MAIN---# could be in a class
-
+#---MAIN---#
 #APIs:
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
-EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1'
+EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1' #firstbuild's
+#EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb717b88c1ec8' #used for testing
 def main():
+<<<<<<< HEAD
 	#Collect user data
+=======
+	global isMainDone
+	isMainDone = False
+	#Fill list of users		
+	global allUsers
+	global allProjects
+	allUsers = []
+	allProjects = []
+	
+>>>>>>> refs/remotes/origin/master
 	data = GET(GiddyAPI)
 	for i in range(len(data['users'])):
 		allUsers.append(User())
@@ -329,159 +358,27 @@ def main():
 				allUsers[i].addProject(proj)
 				proj.addUser(allUsers[i])
 				allProjects.append(proj)
-
+	isMainDone = True;
 	print("################################### going to index #######################################")
 	print ("Done!")
+	
+def envoyInit():
+	#init last envoy login
+	global envoyLL
+
+	envoyLL = Envoy()
+	#Initial setting of last/latest login. data['entries'][0] will always be most recent login.
+	data = GET(EnvoyAPI)
+	if 'id' in data[0].keys():
+		envoyLL.setId(data[0]['id'])
+	if 'your_full_name' in data[0].keys():
+		envoyLL.setName(data[0]['your_full_name'])
+
+main()
+
+#call to initialize Envoy variables
+envoyInit()
 
 #Deploy webpapp
 if __name__ == "__main__":
 	app.run()
-
-#ENVOY BRIDGE THING
-#11/11/2016		
-#For storing list of logged in guests
-'''
-global activeEnvoyGuests
-activeEnvoyGuests = []
-#For storing latest envoy login
-global envoyLastLogin
-envoyLastLogin = Envoy()
-
-data = GET(EnvoyAPI)
-#Initial setting of last/latest login. data['entries'][0] will always be most recent login.
-if 'id' in data['entries'][0].keys():
-	envoyLastLogin.setId(data['entries'][0]['id'])
-if 'your_full_name' in data['entries'][0].keys():
-	envoyLastLogin.setName(data['entries'][0]['your_full_name'])
-if 'giddy_user_id' in data['entries'][0].keys():
-	envoyLastLogin.setUsername(data['entries'][0]['giddy_user_id'])
-if 'your_email_address' in data['entries'][0].keys():
-	envoyLastLogin.setEmail(data['entries'][0]['your_email_address'])
-if 'signed_in_time_local' in data['entries'][0].keys():
-	envoyLastLogin.setSigninTime(data['entries'][0]['signed_in_time_local'])
-if 'signed_out_time_local' in data['entries'][0].keys():
-	envoyLastLogin.setSignOutTime(data['entries'][0]['signed_out_time_local'])
-	
-#envoyLastLogin.setUser(findUser(allUsers, envoyLastLogin.getUsername()))
-
-#do a quick welcome display here
-	
-#START OF THREAD STUFF(THREADING STILL TODO)
-#The logic below will eventually be called every ~5s in its own thread	
-#New API call each poll
-data = GET(EnvoyAPI)
-#New list each poll
-envoyLogins = []
-for i in range(len(data['entries'])):
-	envoyLogins.append(Envoy())
-	if 'your_full_name' in data['entries'][i].keys():
-		envoyLogins[i].setName(data['entries'][i]['your_full_name'])
-	if 'giddy_user_id' in data['entries'][i].keys():
-		envoyLogins[i].setUsername(data['entries'][i]['giddy_user_id'])
-	if 'your_email_address' in data['entries'][i].keys():
-		envoyLogins[i].setEmail(data['entries'][i]['your_email_address'])
-	if 'signed_in_time_local' in data['entries'][i].keys():
-		envoyLogins[i].setSigninTime(data['entries'][i]['signed_in_time_local'])
-	if 'signed_out_time_local' in data['entries'][i].keys():
-		envoyLogins[i].setSignOutTime(data['entries'][i]['signed_out_time_local'])
-	if 'id' in data['entries'][i].keys():
-		envoyLogins[i].setId(data['entries'][i]['id'])
-	if (envoyLogins[i].getId() > envoyLastLogin.getId()):
-		#if current entry's id is > eLL's id, it is a newer login. Set latest login to current entry.
-		envoyLastLogin = envoyLogins[i]
-		#display a welcome here
-	#Now update the logged in/active users list
-	if (envoyLogins[i].isIn()):
-		if ((len(activeEnvoyGuests) == 0) or (envoyLogins[i] not in activeEnvoyGuests)):
-			activeEnvoyGuests.append(envoyLogins[i])
-	else:
-		#do a check to remove entry from logged in guests (if he's in list)
-		if ((len(activeEnvoyGuests) > 0) and (envoyLogins[i] in activeEnvoyGuests)):
-			for j in range(len(activeEnvoyGuests)):
-				if envoyLogins[i].getId() == activeEnvoyGuests[j].getId():
-					del activeEnvoyGuests[j]
-#END OF ENVOY BRIDGE
-
-
-'''
-#print information for the first user
-#print ("Username:", allUsers[0].getUsername())
-#print ("Name:", allUsers[0].getName())
-#print ("Avatar:", allUsers[0].getImage())
-#print ("---User's Projects---")
-#for i in range(len(allUsers[0].projects)):
-#    print ("\tName:", allUsers[0].getProject(i).getName())
-#    print ("\tTitle:", allUsers[0].getProject(i).getTitle())
-#    try:
-#        print ("\tDescription:", allUsers[0].getProject(i).getDetail())
-#    except:
-#        print ("\t\tDescription: Description has emojis!")
-#    print ("\t---Team---")
-#    for j in range(len(allUsers[0].getProject(i).team)):
-#        print ("\tUsername:", allUsers[0].getProject(i).getMember(j).getUsername())
-#    print ("\t---Updates---")
-#    for k in range(len(allUsers[0].getProject(i).updates)):
-#        try:
-#            print ("\t\tName:", allUsers[0].getProject(i).getUpdate(k).getName())
-#        except:
-#            print ("\t\tName: Name has emojis!")
-#        try:
-#            print ("\t\tDescription:", allUsers[0].getProject(i).getUpdate(k).getDetail())
-#        except:
-#            print ("\t\tDescription: Description has emojis!")
-#        print ("\t\tImages:", allUsers[0].getProject(i).getUpdate(k).images, "\n")
-
-#print every project and the full team of that project    
-#for i in range(len(allProjects)):
-#    for j in range(len(allProjects[i].team)):
-#        print (allProjects[i].getTitle(), ":", allProjects[i].getMember(j).getUsername())
-        
-#print all users and the projects associated with each user (note if the user has no projects, they will not appear)
-#for i in range(len(allUsers)):
-#    for j in range(len(allUsers[i].projects)):
-#        print (allUsers[i].getUsername(), ":", allUsers[i].getProject(j).getTitle())
-
-#Check all projects' image URLs
-#for i in range(len(allProjects)):
-#    print (allProjects[i].getTitle(), ":", allProjects[i].getImage())
-        
-#Print all updates for all projects
-#for i in range(len(allProjects)):
-#    for j in range(len(allProjects[i].updates)):
-#        try:
-#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName())
-#        except:
-#            print ("Update has emoji in title!")    #warning: descriptions have also shown to have emojis
-
-#Print all updates and update images for all projects
-#for i in range(len(allProjects)):
-#    for j in range(len(allProjects[i].updates)):
-#        try:
-#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName(), ":", allProjects[i].getUpdate(j).images)
-#        except:
-#            print ("Update has emoji in title! :", allProjects[i].getUpdate(j).images)    #warning: descriptions have also shown to have emojis
-        
-#print all users and the projects associated with each user (note if the user has no projects, they will not appear)
-#for i in range(len(allUsers)):
-#    for j in range(len(allUsers[i].projects)):
-#        print (allUsers[i].getUsername(), ":", allUsers[i].getProject(j).getTitle())
-
-#Check all projects' image URLs
-#for i in range(len(allProjects)):
-#    print (allProjects[i].getTitle(), ":", allProjects[i].getImage())
-        
-#Print all updates for all projects
-#for i in range(len(allProjects)):
-#    for j in range(len(allProjects[i].updates)):
-#        try:
-#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName())
-#        except:
-#            print ("Update has emoji in title!")    #warning: descriptions have also shown to have emojis
-
-#Print all updates and update images for all projects
-#for i in range(len(allProjects)):
-#    for j in range(len(allProjects[i].updates)):
-#        try:
-#            print (allProjects[i].getTitle(), ":", allProjects[i].getUpdate(j).getName(), ":", allProjects[i].getUpdate(j).images)
-#        except:
-#            print ("Update has emoji in title! :", allProjects[i].getUpdate(j).images)    #warning: descriptions have also shown to have emojis

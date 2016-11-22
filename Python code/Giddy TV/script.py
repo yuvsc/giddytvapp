@@ -3,10 +3,10 @@ Created on Oct 19, 2016
 @author: Dylan Alpiger, Yuval Schaal here too, and Michael Dudrey
 '''
 import json
-import Queue
-import threading
+#import Queue
+#import threading
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify
 import traceback
 import time
@@ -56,12 +56,13 @@ def envoyLastLogin():
 
 ##################################################### end enboy things	
 
-#user class: getName(), getUserName(), getImage(), getProject(), getSkill()
+#user class: getName(), getUserName(), getImage(), getCreateDate(), getProject(), getSkill()
 class User:
 	def __init__(self):
 		self.name = ''
 		self.username = ''
 		self.image = ''
+		self.createdDate = ''
 		self.projects = []
 		self.skills = []
       
@@ -73,6 +74,9 @@ class User:
 
 	def getImage(self):
 		return self.image
+		
+	def getCreateDate(self):
+		return self.createdDate
 		
 	def getProject(self, i):
 		return self.projects[i]
@@ -88,6 +92,9 @@ class User:
 		
 	def setImage(self, image):
 		self.image = image
+		
+	def setCreateDate(self, date):
+		self.createdDate = date
 		
 	def addProject(self, p):
 		self.projects.append(p)
@@ -187,12 +194,13 @@ class Update:
     def setImage(self, i, string):
         self.images[i] = string
 		
-#envoy class: getId(), getName(), getUsername(), getEmail(), getSignInTime(), getSignOutTime(), isIn()
+#envoy class: getId(), getName(), getUsername(), getEmail(), getSignInTime(), getSignOutTime(), getImage(), isIn()
 class Envoy:
 	def __init__(self):
 		self.id = ''
 		self.name = ''
 		self.username = ''
+		self.image = ''
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
@@ -215,6 +223,9 @@ class Envoy:
 	def getSignOutTime(self):
 		return self.signOutTime
 		
+	def getImage(self):
+		return self.image
+		
 	def setId(self, x):
 		self.id = x;
 		
@@ -233,6 +244,9 @@ class Envoy:
 	def setSignOutTime(self, o):
 		self.signOutTime = o
 		
+	def setImage(self, image):
+		self.image = image
+		
 	#returns TRUE if the person is currently in building. FALSE otherwise
 	def isIn(self):
 		currentDate = str(datetime.now())
@@ -248,7 +262,7 @@ def GET(a):
     return json.loads(r.text)
 
 	
-#11/11/2016 - What does this return if a project is not found?	
+#11/11/2016 - Returns None if project not found
 #Find specific project within allProjects by it's name
 def findProj(projList, name):
     for i in range(len(projList)):
@@ -261,19 +275,16 @@ def findProj(projList, name):
 GiddyAPI = 'https://firstbuild-stg.herokuapp.com/v1/users'
 EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729ffd0b7df1e1' #firstbuild's
 #EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb717b88c1ec8' #used for testing
+
 def main():
-<<<<<<< HEAD
-	#Collect user data
-=======
 	global isMainDone
-	isMainDone = False
-	#Fill list of users		
+	isMainDone = False	
 	global allUsers
 	global allProjects
 	allUsers = []
 	allProjects = []
 	
->>>>>>> refs/remotes/origin/master
+	#Collect User data
 	data = GET(GiddyAPI)
 	for i in range(len(data['users'])):
 		allUsers.append(User())
@@ -284,7 +295,9 @@ def main():
 		if 'avatar' in data['users'][i].keys():
 			allUsers[i].setImage(data['users'][i]['avatar'])
 			if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
-				allUsers[i].setImage(allUsers[i].getImage() + '/raw')		
+				allUsers[i].setImage(allUsers[i].getImage() + '/raw')
+		if 'created' in data['users'][i].keys():
+			allUsers[i].setCreateDate(datetime.strptime(data['users'][i]['created'][:10], '%Y-%m-%d'))
 		if 'tags' in data['users'][i].keys():
 			for j in range(len(data['users'][i]['tags'])):
 				skill = Skill()
@@ -298,6 +311,16 @@ def main():
 		#if no avatar, use giddy logo as default		
 		if allUsers[i].getImage() == '' or allUsers[i].getImage() == 'https://firstbuild-stg.herokuapp.comfailed/raw':
 			allUsers[i].setImage('static\Giddy.PNG')
+	
+	#Filter users: only users created within the past 7 days are kept
+	oldUsers = []
+	today = datetime.today()
+	date_7_days_ago = today - timedelta(days=7)
+	for i in range(len(allUsers)):
+		if allUsers[i].getCreateDate() < date_7_days_ago:
+			oldUsers.append(allUsers[i])
+	ou = set(oldUsers)
+	allUsers = [x for x in allUsers if x not in ou]
 					
 		
 	#Collect project data
@@ -358,7 +381,8 @@ def main():
 				allUsers[i].addProject(proj)
 				proj.addUser(allUsers[i])
 				allProjects.append(proj)
-	isMainDone = True;
+	
+	isMainDone = True
 	print("################################### going to index #######################################")
 	print ("Done!")
 	
@@ -373,9 +397,21 @@ def envoyInit():
 		envoyLL.setId(data[0]['id'])
 	if 'your_full_name' in data[0].keys():
 		envoyLL.setName(data[0]['your_full_name'])
+	if 'giddy_user_id' in data[0].keys():
+		envoyLL.setUsername(data[0]['giddy_user_id'])
+		
+	setEnvoyImage()
 
+#if envoy user has Giddy account, set image to Giddy avatar. Else, default to Giddy logo		
+def setEnvoyImage():
+	for i in range(len(allUsers)):
+		if envoyLL.getUsername() == allUsers[i].getUsername():
+			envoyLL.setImage(allUsers[i].getImage())
+		else:
+			envoyLL.setImage('static\Giddy.PNG')
+
+#Deploy Main function (gather Giddy data)
 main()
-
 #call to initialize Envoy variables
 envoyInit()
 

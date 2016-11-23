@@ -91,9 +91,9 @@ function reload_page(){
 <div class="row" id="Main">
   <div class="col-sm-3">
   <!-- Vertical Carousel -->
-	<h1>Feed</h1>
-	<hr>
-    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+	<h1>Update Feed</h1>
+	<hr><!-- DATA-INTERVAL TO SET THE TIMING THAT THE CAROUSEL CHANGES-->
+    <div id="myCarousel" class="carousel slide vertical" data-ride="carousel" data-interval="7000">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			<div class="item active">
@@ -103,7 +103,7 @@ function reload_page(){
 				<hr>
 				<h2>Details</h2>
 			</div>
-			
+						
 			{% for i in range(Projects|length) %}
 				{% for j in range(Projects[i].updates|length) %}
 					{% if Projects[i].getUpdate(j).getImage(0) is not none and Projects[i].getImage() != '' %}
@@ -118,6 +118,13 @@ function reload_page(){
 				{% endfor %}
 			{% endfor %}
 		</div>
+		<script>var $carousel = $('#myCarousel');
+				currentIndex = $('div.active').index();
+				  var ActiveElement = $carousel.find('.item.active');
+				  ActiveElement.remove();
+				  var NextElement = $carousel.find('.item').first();
+				  NextElement.addClass('active');
+		</script>
 	</div>
   </div>
   <script>setTimeout(get_envoy_value,1000);</script>
@@ -126,7 +133,7 @@ function reload_page(){
   <div class="col-sm-6">
 	<h1>Maker Space</h1>
 	<hr>
-	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+	<div id="myCarousel1" class="carousel slide" data-ride="carousel" data-interval="10000">
 	  <!-- Wrapper for slides -->
 	  <div class="carousel-inner" role="listbox">
 		
@@ -158,6 +165,14 @@ function reload_page(){
 			{% endif %}
 		{% endfor %}
 	  
+	  <script>var $carousel = $('#myCarousel1');
+				currentIndex = $('div.active').index();
+				  var ActiveElement = $carousel.find('.item.active');
+				  ActiveElement.remove();
+				  var NextElement = $carousel.find('.item').first();
+				  NextElement.addClass('active');
+		</script>
+	  
 	  </div>
 	</div>
   </div>
@@ -166,7 +181,7 @@ function reload_page(){
   <div class="col-sm-3">
 	<h1>Who's Who</h1>
 	<hr>
-	<div id="myCarousel" class="carousel slide vertical" data-ride="carousel">
+	<div id="myCarousel2" class="carousel slide vertical" data-ride="carousel" data-interval="6000">
 		<!--wrapper for slides-->
 		<div class="carousel-inner" role="listbox">
 			
@@ -200,6 +215,14 @@ function reload_page(){
 				</ul>
 			</div>
 			{% endfor %}
+		<script>var $carousel = $('#myCarousel2');
+				currentIndex = $('div.active').index();
+				  var ActiveElement = $carousel.find('.item.active');
+				  ActiveElement.remove();
+				  var NextElement = $carousel.find('.item').first();
+				  NextElement.addClass('active');
+		</script>	
+			
 	  </div>
 	</div>
   </div>

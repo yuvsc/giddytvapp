@@ -22,12 +22,12 @@ function get_envoy_value(){
 		contentType: 'application/json;charset=UTF-8',
 		success: function(result) {
 			//console.log(result);
-			var EnvoyValueRecieved = String(result);
+			var EnvoyValueRecieved = String(result).split(" ");
 			console.log("got envoy values!");
 			//console.log(EnvoyValueRecieved);
-			if(EnvoyValueRecieved!=""){
-				console.log(EnvoyValueRecieved);
-				welcome(EnvoyValueRecieved);
+			if(EnvoyValueRecieved[0]!=""){
+				console.log(EnvoyValueRecieved[0], EnvoyValueRecieved[1]);
+				welcome(EnvoyValueRecieved[0], EnvoyValueRecieved[1]);
 			} else {
 				//console.log("got nothing");
 			}
@@ -54,12 +54,15 @@ function get_envoy_value(){
             }
     });*/
 };
-function welcome(name){
+function welcome(name, avatar){
 	$("#Main").hide();
 	$(".Welcome").show();
 	//make something in html change to name
 	element = document.getElementById('visitor-name');
-	element.innerHTML = name.replace(/(\r\n|\n|\r)/gm,"");;
+	element.innerHTML = name.replace(/(\r\n|\n|\r)/gm,"");
+	var allImage = '<img style="margin-top:15%" src="'+avatar+'" alt="Avatar" width="25%">';
+	element2 = document.getElementById('img-name');
+	element2.innerHTML = allImage;
 	setTimeout(function () { // wait 3 seconds and hide welcome
 		$(".Welcome").hide();
 		$("#Main").show();
@@ -81,12 +84,8 @@ function reload_page(){
 <script>
 	$(document).ready(
 		function(){
-<<<<<<< HEAD
-			$(.Welcome).hide();
-=======
 			$(".Welcome").hide();
 			setInterval(function(){ reload_page(); },60*60000); // reload the page every hour
->>>>>>> refs/remotes/origin/master
 		}
 	);
 </script>
@@ -213,7 +212,8 @@ function reload_page(){
 
 <!--Welcome Screen-->
 <div class="Welcome">
-	<img style="margin-top:15%" src="static\Giddy.PNG" alt="Giddy" width="25%">
+	<div id='img-name' class='img-name'></div>
+	<!--<img style="margin-top:15%" src="static\Giddy.PNG" alt="Giddy" width="25%">-->
 	<h3 style="font-size:50pt; margin-bottom:15%">Welcome <div id='visitor-name' class='visitor-name'></div>!</h3>
 </div>
 

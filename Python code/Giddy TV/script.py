@@ -33,7 +33,7 @@ def ma():#used to refresh main
 @app.route('/envoy')
 def envoy() :
 	if (envoyLastLogin()):
-		return (envoyLL.getName())
+		return (envoyLL.getName() + ' ' + envoyLL.getImage())
 	else: return ('')
 
 #################################################### all envoy things
@@ -278,7 +278,9 @@ EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=db8ec594e512921a33729
 
 def main():
 	global isMainDone
-	isMainDone = False	
+	isMainDone = False
+	global defaultAvatar
+	defaultAvatar = 'static\Giddy.PNG'
 	global allUsers
 	global allProjects
 	allUsers = []
@@ -310,7 +312,7 @@ def main():
 		
 		#if no avatar, use giddy logo as default		
 		if allUsers[i].getImage() == '' or allUsers[i].getImage() == 'https://firstbuild-stg.herokuapp.comfailed/raw':
-			allUsers[i].setImage('static\Giddy.PNG')
+			allUsers[i].setImage(defaultAvatar)
 	
 	#Filter users: only users created within the past 7 days are kept
 	oldUsers = []
@@ -408,7 +410,7 @@ def setEnvoyImage():
 		if envoyLL.getUsername() == allUsers[i].getUsername():
 			envoyLL.setImage(allUsers[i].getImage())
 		else:
-			envoyLL.setImage('static\Giddy.PNG')
+			envoyLL.setImage(defaultAvatar)
 
 #Deploy Main function (gather Giddy data)
 main()

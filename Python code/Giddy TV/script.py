@@ -3,19 +3,23 @@ Created on Oct 19, 2016
 @author: Dylan Alpiger, Yuval Schaal here too, and Michael Dudrey
 '''
 import json
-import Queue
-import threading
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify
 import traceback
 import time
+import os
+
+port = int(os.environ.get("PORT", 5000))
 
 global allUsers
 global allProjects
 allUsers = []
 allProjects = []
-global isMainDone 
+global isMainDone
+global defaultAvatar
+defaultAvatar = 'static\Giddy.PNG'
+global envoyLL
 isMainDone = True #refresh only when main is done
 
 app = Flask(__name__)
@@ -32,8 +36,9 @@ def ma():#used to refresh main
 	
 @app.route('/envoy')
 def envoy() :
+	global envoyLL
 	if (envoyLastLogin()):
-		return (envoyLL.getName())
+		return (envoyLL.getName() + ' ' + envoyLL.getImage())
 	else: return ('')
 
 #################################################### all envoy things
@@ -42,6 +47,8 @@ def envoy() :
 #11/17/2016
 #Function to return name of latest login. Empty string if latest login is not new.
 def envoyLastLogin():
+	global envoyLL	
+	setEnvoyImage()
 	data = GET(EnvoyAPI)
 	if 'id' in data[0].keys():
 		if (data[0]['id'] > envoyLL.getId()):
@@ -62,6 +69,7 @@ class User:
 		self.name = ''
 		self.username = ''
 		self.image = ''
+		self.createdDate = ''
 		self.projects = []
 		self.skills = []
       
@@ -73,6 +81,9 @@ class User:
 
 	def getImage(self):
 		return self.image
+		
+	def getCreateDate(self):
+		return self.createdDate
 		
 	def getProject(self, i):
 		return self.projects[i]
@@ -88,6 +99,9 @@ class User:
 		
 	def setImage(self, image):
 		self.image = image
+	
+	def setCreateDate(self, date):
+		self.createdDate = date
 		
 	def addProject(self, p):
 		self.projects.append(p)
@@ -193,6 +207,7 @@ class Envoy:
 		self.id = ''
 		self.name = ''
 		self.username = ''
+		self.image = ''
 		self.email = ''
 		self.signInTime = ''
 		self.signOutTime = ''
@@ -215,6 +230,9 @@ class Envoy:
 	def getSignOutTime(self):
 		return self.signOutTime
 		
+	def getImage(self):
+		return self.image
+		
 	def setId(self, x):
 		self.id = x;
 		
@@ -232,6 +250,9 @@ class Envoy:
 	
 	def setSignOutTime(self, o):
 		self.signOutTime = o
+		
+	def setImage(self, image):
+		self.image = image
 		
 	#returns TRUE if the person is currently in building. FALSE otherwise
 	def isIn(self):
@@ -264,6 +285,7 @@ EnvoyAPI = 'https://app.envoy.com/api/entries.json?api_key=5333bd8ab336ccbb20ceb
 def main():
 	global isMainDone
 	isMainDone = False
+	global defaultAvatar
 	#Fill list of users		
 	global allUsers
 	global allProjects
@@ -281,7 +303,8 @@ def main():
 			allUsers[i].setImage(data['users'][i]['avatar'])
 			if (allUsers[i].getImage()[-4:] != '/raw' and allUsers[i].getImage() is not None and allUsers[i].getImage() != ''):
 				allUsers[i].setImage(allUsers[i].getImage() + '/raw')
-				
+		if 'created' in data['users'][i].keys():
+			allUsers[i].setCreateDate(datetime.strptime(data['users'][i]['created'][:10], '%Y-%m-%d'))		
 		if 'tags' in data['users'][i].keys():
 			for j in range(len(data['users'][i]['tags'])):
 				skill = Skill()
@@ -291,9 +314,20 @@ def main():
 					skill.setLevel(data['users'][i]['tags'][j]['level'])
 					
 				allUsers[i].addSkill(skill)
-					
+
+		#if no avatar, use giddy logo as default		
 		if allUsers[i].getImage() == '' or allUsers[i].getImage() == 'https://firstbuild-stg.herokuapp.comfailed/raw':
-			allUsers[i].setImage('static\Giddy.PNG')
+			allUsers[i].setImage(defaultAvatar)
+	
+	#Filter users: only users created within the past 7 days are kept
+	'''oldUsers = []
+	today = datetime.today()
+	date_7_days_ago = today - timedelta(days=7)
+	for i in range(len(allUsers)):
+		if allUsers[i].getCreateDate() < date_7_days_ago:
+			oldUsers.append(allUsers[i])
+	ou = set(oldUsers)
+	allUsers = [x for x in allUsers if x not in ou]'''
 	
 	#Fill users with their projects
 	for i in range(len(allUsers)):
@@ -368,6 +402,20 @@ def envoyInit():
 		envoyLL.setId(data[0]['id'])
 	if 'your_full_name' in data[0].keys():
 		envoyLL.setName(data[0]['your_full_name'])
+	if 'giddy_user_id' in data[0].keys():
+		envoyLL.setUsername(data[0]['giddy_user_id'])
+	
+#if envoy user has Giddy account, set image to Giddy avatar. Else, default to Giddy logo		
+def setEnvoyImage():
+	global allUsers
+	global envoyLL
+	for i in range(len(allUsers)):
+		#print(envoyLL.getUsername()+" HERE R USER NAMES "+ allUsers[i].getUsername())
+		if envoyLL.getUsername() == allUsers[i].getUsername():
+			envoyLL.setImage(allUsers[i].getImage())
+			break
+		else:
+			envoyLL.setImage(defaultAvatar)
 
 main()
 
@@ -376,4 +424,4 @@ envoyInit()
 
 #Deploy webpapp
 if __name__ == "__main__":
-	app.run()
+	app.run(debug=True, host='0.0.0.0', port=port)
